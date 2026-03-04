@@ -5,6 +5,8 @@ const Joi = require('joi');
 const UsersRepository = require('../../../packages/openspec-mariadb-adapter/db/UsersRepository');
 const { JWT_SECRET } = require('../middleware/requireAuth');
 
+const IS_DEV = process.env.NODE_ENV === 'development';
+
 const router = express.Router();
 
 const registerSchema = Joi.object({
@@ -58,8 +60,8 @@ router.post('/login', async (req, res) => {
     if (IS_DEV) console.log('[DEBUG] Admin Login Attempt:', { username, companyId });
     const user = await UsersRepository.findByUsername(username);
     if (!user || user.company_id !== companyId) {
-      if (IS_DEV) console.log('[DEBUG] User not found or company mismatch');
-      return res.status(401).json({ error: 'Credenciales inválidas o empresa incorrecta' });
+      if (IS_DEV) console.log('[DEBUG] Admin not found or company mismatch');
+      return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
     const isValid = bcrypt.compareSync(password, user.hash);
@@ -92,7 +94,7 @@ const workerLoginSchema = Joi.object({
   companyId: Joi.string().alphanum().max(50).required()
 });
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
+
 
 router.post('/worker/register', async (req, res) => {
   const { error, value } = workerAuthSchema.validate(req.body);
@@ -163,7 +165,7 @@ router.post('/worker/login', async (req, res) => {
     const worker = await WorkersRepo.findByEmail(email);
     if (!worker || worker.company_id !== companyId) {
       if (IS_DEV) console.log('[DEBUG] Worker not found or company mismatch');
-      return res.status(401).json({ error: 'Credenciales inválidas o empresa incorrecta' });
+      return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
     if (!worker.password_hash) {

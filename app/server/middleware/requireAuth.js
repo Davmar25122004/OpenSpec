@@ -19,7 +19,8 @@ function requireAuth(req, res, next) {
     req.user = payload;
     next();
   } catch (err) {
-    return res.status(401).json({ error: 'Sesión expirada o token inválido.' });
+    console.warn(`[AUTH] Failed attempt from IP: ${req.ip}`);
+    return res.status(401).json({ error: 'Acceso denegado.' });
   }
 }
 

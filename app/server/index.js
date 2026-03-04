@@ -2,11 +2,34 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../../packa
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { rateLimit } = require('express-rate-limit');
 
 const app = express();
+
+// Rate Limiting Configuration
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per window
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiadas peticiones. Por favor, inténtelo de nuevo más tarde.' }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 10, // Limit each IP to 10 login attempts per hour
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos de acceso. Por seguridad, su IP ha sido limitada temporalmente.' }
+});
+
+app.use(globalLimiter);
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client')));
+
+// Specific limiter for Auth
+app.use('/api/auth', authLimiter);
 
 // Logger
 app.use((req, res, next) => {

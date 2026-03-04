@@ -615,6 +615,30 @@ _Actualizado el 04/03/2026 - Implementación del Sistema de Login Dual y Portal 
 - **Escalabilidad**: Segregar el adaptador de base de datos en un paquete propio facilita su mantenimiento independiente y su posible reutilización en otros servicios o micro-servicios futuros.
 - **Mantenibilidad**: Reducir el ruido visual en la raíz del proyecto permite a los desarrolladores identificar rápidamente los componentes principales del sistema, siguiendo estándares de la industria para monorepos o proyectos de gran escala.
 
+## Funcionalidad v15: Security Hardening & Rate Limiting
+
+### Registro de Prompts
+
+> "Retoques de seguridad: No dejes las api keys expuestas, delegar autentificación y haz rate limit a mis rutas de la API."
+
+### Análisis de Resultado (Blindaje de Infraestructura)
+
+1. **Control de Abuso (Rate Limiting)**:
+   - **Capa de Protección Global**: Implementación de `express-rate-limit` con una cuota de 100 peticiones cada 15 minutos para evitar saturación.
+   - **Blindaje de Autenticación**: Restricción agresiva de 10 intentos de login por hora para mitigar ataques de fuerza bruta.
+
+2. **Privacidad y Ofuscación (Generic Errors)**:
+   - **Login Hardening**: Refactorización de las respuestas de error en los endpoints `/login` y `/worker/login` para utilizar mensajes genéricos ("Credenciales inválidas"), eliminando la capacidad de un atacante para enumerar cuentas existentes.
+   - **Middleware Auditado**: Actualización de `requireAuth.js` para registrar intentos de acceso fallidos mediante logs de advertencia.
+
+3. **Gestión de Secretos (Configuration Isolation)**:
+   - **Cero Hardcoding**: Verificación y limpieza de claves maestras. Uso estricto de `process.env` para la carga de `JWT_SECRET` y configuraciones sensibles desde archivos `.env` (excluidos del repositorio).
+
+### Justificación Técnica
+
+- **Resiliencia ante Ataques**: El rate limiting es la primera línea de defensa contra scrapers y bots, asegurando que la disponibilidad del servicio se mantenga para usuarios legítimos.
+- **Defensa Pasiva**: Al no revelar si un correo electrónico o usuario existe en el sistema durante el login, se reduce drásticamente el éxito de campañas de phishing o robo de cuentas dirigidas.
+
 ---
 
-_Actualizado el 05/03/2026 - Reorganización completa de la estructura del proyecto, migración de adaptadores a `packages/` y limpieza de scripts de utilidad en `tooling/`._
+_Actualizado el 05/03/2026 - Implementación de capas de seguridad contra fuerza bruta, ofuscación de errores de acceso y gestión segura de secretos de entorno._
