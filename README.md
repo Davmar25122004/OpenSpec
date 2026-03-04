@@ -1,49 +1,43 @@
-# OpenSpec Workforce Management System 🚀
+# OpenSpec Workforce Management
 
-Este proyecto es una plataforma integral para la gestión de recursos humanos y control de presencia, **desarrollado bajo la metodología y ecosistema de OpenSpec**, garantizando una trazabilidad total desde la especificación hasta la implementación final.
+Plataforma modular para la administración de recursos humanos y control de presencia, diseñada bajo estándares de ingeniería de software profesional y centrada en la trazabilidad operativa.
 
-## 📋 Propósito del Proyecto
+## Propósito
 
-Optimizar y profesionalizar la gestión operativa de empresas mediante:
+Este sistema centraliza la gestión de equipos mediante herramientas de control de tiempos y flujos administrativos, garantizando la integridad de los datos y una experiencia de usuario fluida.
 
-- **Control de Presencia**: Fichaje inteligente con validaciones de estado y geolocalización.
-- **Gestión Administrativa**: Panel para el control de departamentos, horarios, vacaciones y horas extra.
-- **Seguridad Avanzada**: Protección de datos y prevención de ataques automatizados.
+- **Control de Asistencia**: Registro de jornada con validación de estado y geolocalización integrada.
+- **Gestión de Equipos**: Administración de departamentos, horarios, vacaciones y horas extra.
+- **Seguridad**: Implementación de controles contra acceso no autorizado y ataques de fuerza bruta.
 
-## 🛠️ Tecnologías y Herramientas (Ecosistema OpenSpec)
+## Stack Tecnológico
 
-El proyecto utiliza un stack moderno y modular, gestionado íntegramente mediante **OpenSpec**:
+Arquitectura moderna basada en micro-servicios y componentes modulares:
 
-### Frameworks & Lenguajes
-
-- **Backend**: Node.js v24+ & Express.js (Arquitectura de Servicios y Repositorios).
+- **Backend**: Node.js & Express.js.
 - **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism UI) y JavaScript ES6+.
-- **Base de Datos**: MariaDB (Persistencia robusta y escalable).
+- **Persistencia**: MariaDB (Estructura relacional optimizada).
+- **Seguridad**: JWT para sesiones, BCrypt para hashing, y Rate Limiting para protección de API.
 
-### Seguridad & Calidad
+## Arquitectura y Monorepo
 
-- **Autenticación**: JWT (JSON Web Tokens) con gestión segura de secretos vía `.env`.
-- **Protección**: `express-rate-limit` para prevención de fuerza bruta y ataques DDoS.
-- **Validación**: `Joi` y `Validator` para asegurar la integridad de los esquemas de datos.
-- **Arquitectura**: Estructura de **Monorepo** con adaptadores segregados en `packages/`.
-
-### Desarrollo Specs-Driven
-
-Toda la evolución del proyecto está documentada en el `PROJECT_LOG.md` y gestionada a través del sistema de **Cambios y Especificaciones de OpenSpec**, permitiendo un seguimiento histórico versionado de cada funcionalidad.
-
-## 📁 Estructura del Monorepo
+El proyecto utiliza una estructura de monorepo para facilitar el mantenimiento y la escalabilidad de los adaptadores de datos:
 
 ```text
 OpennSpec/
 ├── app/
-│   ├── client/      # Interfaz de usuario dinámica
-│   └── server/      # Logic de negocio y API REST
+│   ├── client/      # Interfaz de usuario
+│   └── server/      # Core de servicios y API REST
 ├── packages/
-│   └── openspec-mariadb-adapter/ # Adaptador de persistencia
-├── tooling/        # Scripts de utilidad y mantenimiento
-└── openspec/       # Registros de arquitectura y especificaciones
+│   └── openspec-mariadb-adapter/ # Adaptador de persistencia segregado
+├── tooling/        # Utilidades de desarrollo
+└── openspec/       # Documentación técnica y especificaciones
 ```
+
+## Desarrollo Dirigido por Especificaciones (OpenSpec)
+
+Este proyecto sigue la metodología **OpenSpec**, donde cada funcionalidad nace de una especificación técnica. Esto permite un historial de cambios (`PROJECT_LOG.md`) totalmente auditable y una alineación estricta entre los requisitos del negocio y el código implementado.
 
 ---
 
-_Desarrollado con ❤️ y OpenSpec para un control total del ciclo de vida del software._
+_Gestión eficiente para equipos modernos._
