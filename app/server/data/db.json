@@ -1,0 +1,132 @@
+{
+  "workers": [
+    {
+      "id": "ep23",
+      "name": "Lopez CRespo",
+      "company": "globex",
+      "department": "lol"
+    },
+    {
+      "id": "ep23666",
+      "name": "elene",
+      "company": "stark",
+      "department": "LOl"
+    },
+    {
+      "id": "EMP222",
+      "name": "Juana",
+      "company": "acme",
+      "department": "lenffua",
+      "status": "despedido",
+      "passwordHash": "$2b$10$Vsem.lQB4f1R9lYhGiLV1.lRa5Vnuh5.7Wd2P0m4wf5hLZyVWAIDu"
+    },
+    {
+      "id": "ep222",
+      "name": "David Ruanes",
+      "company": "acme",
+      "department": "lol",
+      "email": "davidfr1204@gmail.com",
+      "phone": "+34 695257015",
+      "status": "activo"
+    }
+  ],
+  "users": [
+    {
+      "username": "mish",
+      "hash": "$2b$12$1IzXd3YL9LegRP.Qm5E8aO4uSANDET2/9ixo3KTjMOEMwvyO3Hl.6",
+      "companyId": "acme"
+    },
+    {
+      "username": "Juan",
+      "hash": "$2b$12$uHhqEWhpVkNBeDfJxnl6uedAN4Zyvi2ng6cInrgdhgA4O2GPF2ahO",
+      "companyId": "stark"
+    },
+    {
+      "username": "juan",
+      "hash": "$2b$12$/hF4AJ/jD6UJKIEQ3e07Aexvwd8KR41KVTnpJbzmICNsToL6X.PYe",
+      "companyId": "stark"
+    },
+    {
+      "username": "mishe",
+      "hash": "$2b$12$kCXCNH7xzY.fzxYApzGRFeMTukqVWRT50uqdm2CJx4b9L/D1xGxju",
+      "companyId": "acme"
+    },
+    {
+      "username": "test",
+      "hash": "$2b$12$BZmbWtWpsZH0e3ePIOPeIeYLf8ElYNBymEbWGFVD22LZbI1ZBYh62",
+      "companyId": "acme"
+    },
+    {
+      "username": "mi",
+      "hash": "$2b$12$nliomRWYkC4xlTRT1um.l.b.b/Ev3xswYiEfQ02UkCQE5Ri4wqtAy",
+      "companyId": "globex"
+    },
+    {
+      "username": "tester",
+      "hash": "$2b$12$ujsORfAtkv/ck3VEXJiyiuP1aU.DBv/93HyeB7.xcJTQhRDahPsYC",
+      "companyId": "acme"
+    },
+    {
+      "username": "tester2",
+      "hash": "$2b$12$qdRvWLgB3i4v4VcXJEEVgumTb5NB0frhlJL0qzMU6Zqt7Jq7vY6wK",
+      "companyId": "acme"
+    },
+    {
+      "username": "m",
+      "hash": "$2b$12$PxrgUOZbSE0a0x.zoX87FeaJXbKbmDHvOtr8kO1qwrEOJuqi.le8m",
+      "companyId": "stark"
+    },
+    {
+      "username": "verifyuser1",
+      "hash": "$2b$12$Zo31H3tiZY0D50DX4XDQxuu06rRtYqPpa0gWTQNl3.lhCpzU2fYY.",
+      "companyId": "acme"
+    },
+    {
+      "username": "verifyuser2",
+      "hash": "$2b$12$3ULcxaXYI0QtBtybnUDdR.UyT6tEN71swKzCG4Lb0fQuxzakGg4BC",
+      "companyId": "acme"
+    },
+    {
+      "username": "schedtest",
+      "hash": "$2b$12$wC3w98f1WotnaBpBRpE4XOlZnIeUEz1iUt00hxoaWo6USnT/3F.22",
+      "companyId": "acme"
+    },
+    {
+      "username": "davis",
+      "hash": "$2b$12$hqpmHB5wnXpIMj348brV5OrUDObT3OFS3C6VO7nW0xZVhctgqoz1m",
+      "companyId": "acme"
+    },
+    {
+      "username": "verifyq",
+      "hash": "$2b$12$iMAdUYKlhPEr5EGJFmA3reG5yETH61lyZaojagw2Hl16uMWb.8fD.",
+      "companyId": "acme"
+    },
+    {
+      "username": "vactest",
+      "hash": "$2b$12$AgTBtPMyHdzni0Wlzq61s.51SyCnVfMmr03ZP/IzPKGnzppJPilfO",
+      "companyId": "acme"
+    },
+    {
+      "username": "finaltest",
+      "hash": "$2b$12$JNZhISoM5bIDkMMDwgoIR.f5eaWq2NGRB3l5BFWjefZ17tMGKh1la",
+      "companyId": "acme"
+    },
+    {
+      "username": "desptest",
+      "hash": "$2b$12$Tx59.R3IazCKW6MaUjZbV.Qnvr1Ppk/kExhxjUrZ/ARrL5Hs8JP/S",
+      "companyId": "acme"
+    }
+  ],
+  "hours": {
+    "ep23": []
+  },
+  "schedules": {
+    "EMP222": {
+      "monday": "09:00-23:24",
+      "tuesday": "09:00-20:21"
+    }
+  },
+  "vacations": {
+    "EMP222": []
+  }
+}

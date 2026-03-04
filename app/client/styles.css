@@ -1,0 +1,493 @@
+:root {
+  /* Colors */
+  --clr-bg: #f5f7fa;
+  --clr-surface: #ffffff;
+  --clr-text: #333333;
+  --clr-text-muted: #666666;
+  --clr-primary: #4361ee;
+  --clr-secondary: #3f37c9;
+  --clr-danger: #ef233c;
+  --clr-success: #2a9d8f;
+  --clr-warning: #f4a261;
+  --clr-info: #4cc9f0;
+  
+  /* Background gradients for avatars */
+  --clr-accent: #4361ee;
+  --clr-accent-2: #4cc9f0;
+  
+  /* Shadows and Borders */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+}
+
+body {
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}
+
+/* Layout Grid */
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panels */
+.panel {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--clr-bg);
+  padding-bottom: 0.5rem;
+}
+
+/* Worker Grid */
+.worker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Worker Card */
+.worker-card {
+  background: var(--clr-surface);
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: card-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.worker-card.is-removing {
+  animation: card-out 0.3s ease forwards;
+}
+
+.worker-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.worker-card__body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.worker-card__avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-2));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.worker-card__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.worker-card__id {
+  font-family: monospace;
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+  background: #f1f5f9;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-sm);
+  margin-top: 0.2rem;
+}
+
+.worker-card__dept {
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  margin-top: 0.2rem;
+}
+
+.worker-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1rem;
+}
+
+/* Interactive scale utility (BS5 custom extension) */
+.interactive-scale {
+  transition: all var(--transition-fast);
+}
+.interactive-scale:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+.interactive-scale:active {
+  transform: scale(0.98);
+}
+
+/* Form Fields */
+.field {
+  margin-bottom: 1.2rem;
+}
+.field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+.field input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: inherit;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+/* Buttons */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.btn--primary {
+  background: var(--clr-primary);
+  color: white;
+  width: 100%;
+  padding: 0.75rem;
+}
+.btn--primary:hover {
+  background: var(--clr-secondary);
+}
+.btn--secondary {
+  background: #f1f5f9;
+  color: var(--clr-text);
+}
+.btn--secondary:hover {
+  background: #e2e8f0;
+}
+.btn--danger {
+  background: #fee2e2;
+  color: var(--clr-danger);
+}
+.btn--danger:hover {
+  background: #fecaca;
+}
+.btn--sm {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+}
+.btn-icon-only {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.btn-icon-only:hover {
+  color: var(--clr-text);
+}
+
+/* Dialogs */
+.schedule-dialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 0;
+  min-width: 350px;
+  max-width: 90vw;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+}
+
+.schedule-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  animation: backdrop-in 0.3s ease forwards;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+.dialog-title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+#schedule-form {
+  padding: 1.5rem;
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.schedule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.schedule-row--header {
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.schedule-row label {
+  flex: 1;
+}
+.schedule-row input {
+  width: 150px;
+  padding: 0.4rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+.dialog-actions > * {
+  width: auto;
+}
+
+/* Banners */
+.banner {
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  animation: banner-in 0.3s ease forwards;
+}
+.banner--error {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+.banner--success {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: var(--clr-text-muted);
+  background: #f8fafc;
+  border-radius: var(--radius-lg);
+  border: 2px dashed #e2e8f0;
+}
+
+/* Animations */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes card-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Inline Schedule Inputs on Worker Cards ──────────────────────────────── */
+.inline-sched-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: #e5e5e5;
+  font-size: 0.75rem;
+  font-family: 'Inter', monospace;
+  padding: 0.15rem 0.25rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.inline-sched-input:focus {
+  border-bottom-color: #0ea5e9;
+  color: #fff;
+}
+.inline-sched-input::placeholder {
+  color: #404040;
+}
+/* ── Worker Despedido card styling ───────────────────────────────────────── */
+.worker-despedido {
+  opacity: 0.55;
+  filter: grayscale(0.7);
+  pointer-events: none; /* block all interaction */
+}
+.worker-despedido .btn-remove {
+  pointer-events: auto; /* keep trash icon (hidden anyway) accessible */
+}
+
+input[type="date"].input-field {
+  color-scheme: dark;
+  color: #e5e5e5;
+}
+input[type="date"].input-field::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+input[type="date"].input-field::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* ── jQuery UI Datepicker inside native <dialog> ─────────────────────────────
+   The native <dialog> element places itself in the CSS top-layer, creating
+   a new stacking context. The datepicker widget must be positioned relatively
+   to stay inside the top-layer and visible above the dialog backdrop. */
+
+#vacation-dialog .ui-datepicker {
+  z-index: 9999 !important;
+  position: absolute !important;
+  font-size: 0.85rem;
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+  color: #e5e5e5;
+  padding: 0.75rem;
+}
+
+#vacation-dialog .ui-datepicker-header {
+  background: transparent;
+  border: none;
+  color: #f5f5f5;
+  font-weight: 600;
+  padding: 0.25rem 0;
+  margin-bottom: 0.5rem;
+}
+
+#vacation-dialog .ui-datepicker-prev,
+#vacation-dialog .ui-datepicker-next {
+  top: 0.25rem;
+  cursor: pointer;
+}
+
+#vacation-dialog .ui-datepicker td a,
+#vacation-dialog .ui-datepicker td span {
+  color: #d4d4d4;
+  border-radius: 6px;
+  padding: 0.3em;
+  text-align: center;
+}
+
+#vacation-dialog .ui-datepicker td a:hover {
+  background: rgba(14, 165, 233, 0.2);
+  color: #38bdf8;
+}
+
+#vacation-dialog .ui-datepicker .ui-state-active {
+  background: #0284c7 !important;
+  color: white !important;
+  border-radius: 6px;
+}
+
+#vacation-dialog .ui-datepicker .ui-state-disabled {
+  opacity: 0.35;
+}
+
+#vacation-dialog .ui-datepicker th {
+  color: #737373;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3em;
+}
