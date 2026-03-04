@@ -6,6 +6,11 @@ class WorkersRepository {
     return rows[0];
   }
 
+  async findByEmail(email) {
+    const rows = await pool.query('SELECT * FROM workers WHERE email = ?', [email]);
+    return rows[0];
+  }
+
   async findByCompany(companyId) {
     return await pool.query('SELECT * FROM workers WHERE company_id = ?', [companyId]);
   }
@@ -18,9 +23,16 @@ class WorkersRepository {
     return await pool.query(sql, params);
   }
 
-  async update(id, { name, department, email, phone }) {
-    const sql = 'UPDATE workers SET name = ?, department = ?, email = ?, phone = ? WHERE id = ?';
-    return await pool.query(sql, [name, department, email, phone, id]);
+  async update(id, { name, department, email, phone, passwordHash }) {
+    let sql, params;
+    if (passwordHash) {
+      sql = 'UPDATE workers SET name = ?, department = ?, email = ?, phone = ?, password_hash = ? WHERE id = ?';
+      params = [name, department, email, phone, passwordHash, id];
+    } else {
+      sql = 'UPDATE workers SET name = ?, department = ?, email = ?, phone = ? WHERE id = ?';
+      params = [name, department, email, phone, id];
+    }
+    return await pool.query(sql, params);
   }
 
   async delete(id, companyId) {

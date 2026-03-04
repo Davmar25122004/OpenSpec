@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', validateWorker, async (req, res) => {
-  const { id, name, company, department, email, phone } = req.body;
+  const { id, name, company, department, email, phone, password } = req.body;
   
   if (company !== req.user.companyId) {
     return res.status(403).json({ error: 'Solo puedes crear trabajadores en tu propia empresa.' });
@@ -87,7 +87,23 @@ router.post('/', validateWorker, async (req, res) => {
       return res.status(400).json({ error: 'El ID ya existe.' });
     }
 
-    await WorkersRepository.create({ id, name, companyId: company, department, email, phone, status: 'activo' });
+    let hash = null;
+    if (password) {
+      const bcrypt = require('bcryptjs');
+      const salt = bcrypt.genSaltSync(12);
+      hash = bcrypt.hashSync(password, salt);
+    }
+
+    await WorkersRepository.create({ 
+      id, 
+      name, 
+      companyId: company, 
+      department, 
+      email, 
+      phone, 
+      status: 'activo',
+      passwordHash: hash
+    });
     res.status(201).json({ id, name, company, department, email, status: 'activo' });
   } catch (err) {
     console.error('POST /workers error:', err);
@@ -134,6 +150,53 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     console.error('DELETE /workers/:id error:', err);
     res.status(500).json({ error: 'Error al eliminar trabajador' });
+  }
+});
+
+router.get('/me', async (req, res) => {
+  if (!req.user.isWorker) return res.status(403).json({ error: 'Acceso solo para trabajadores' });
+
+  try {
+    const worker = await WorkersRepository.findById(req.user.workerId);
+    if (!worker) return res.status(404).json({ error: 'No se encontró tu perfil' });
+    
+    // Omitimos el hash de la contraseña por seguridad
+    const { password_hash, ...profile } = worker;
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener el perfil' });
+  }
+});
+
+router.put('/me', async (req, res) => {
+  if (!req.user.isWorker) return res.status(403).json({ error: 'Acceso solo para trabajadores' });
+
+  const { name, email, phone, password, department } = req.body;
+  const workerId = req.user.workerId;
+
+  try {
+    const worker = await WorkersRepository.findById(workerId);
+    if (!worker) return res.status(404).json({ error: 'Perfil no encontrado' });
+
+    let hash = null;
+    if (password) {
+      const bcrypt = require('bcryptjs');
+      const salt = bcrypt.genSaltSync(12);
+      hash = bcrypt.hashSync(password, salt);
+    }
+
+    await WorkersRepository.update(workerId, {
+      name: name || worker.name,
+      department: department || worker.department,
+      email: email || worker.email,
+      phone: phone || worker.phone,
+      passwordHash: hash || worker.password_hash
+    });
+
+    res.json({ message: 'Perfil actualizado con éxito' });
+  } catch (err) {
+    console.error('Update me error:', err);
+    res.status(500).json({ error: 'Error al actualizar perfil' });
   }
 });
 

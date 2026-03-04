@@ -409,3 +409,72 @@ _Actualizado el 04/03/2026 - Documentación de infraestructura y metodología de
 ---
 
 _Actualizado el 04/03/2026 - Capa de Seguridad de BD MariaDB completada (Restauración V7)._
+
+---
+
+## Funcionalidad v8: Estabilización de Infraestructura y Control de Versiones
+
+### Registro de Prompts
+
+> "Eliminar todos los cambios del Dual Login (v8 fallida) y volver al estado estable v7. Asegurar que MariaDB funcione exclusivamente en Docker para evitar conflictos de puerto con el sistema local. Cambiar la lógica de borrado a eliminación física definitiva. Inicializar el proyecto en una rama Git denominada main para asegurar la trazabilidad."
+> ##ERRORES
+
+### Análisis de Resultado (Hitos de Estabilización)
+
+1. **Rollback Estratégico (Recovery)**:
+   - Se revirtieron todas las modificaciones relacionadas con el sistema de roles y login dual, eliminando la deuda técnica y los errores de referencia (`removeBtn is not defined`) introducidos durante la experimentación.
+   - Restauración de la arquitectura perimetral estable: Admin Dashboard con persistencia en MariaDB y seguridad "Double Shield".
+
+2. **Dockerización Exclusiva (Infrastructure)**:
+   - Se resolvió el conflicto persistente del puerto `3306` desactivando los servicios de MariaDB/MySQL nativos de Windows.
+   - El entorno se estandarizó operando únicamente bajo el contenedor `openspec-db`. Se corrigió el error de sintaxis en el comando `mysqld` de `docker-compose.yml` para garantizar un arranque limpio y automático.
+
+3. **Borrado Físico Definitivo (Hard Delete)**:
+   - Reemplazo del modelo de "Soft Delete" (marcado como despedido) por una eliminación física integral mediante comandos `DELETE`.
+   - Implementado un sistema de limpieza en cascada que borra automáticamente las vacaciones y horas extra asociadas en `db.json` al eliminar un trabajador de MariaDB.
+
+4. **Gobierno de Código (Git Initialization)**:
+   - Creación del repositorio Git local utilizando la rama estándar `main`.
+   - Implementación de un archivo `.gitignore` profesional para proteger credenciales (`.env`) y evitar el almacenamiento redundante de dependencias o artefactos temporales de OpenSpec.
+
+### Justificación Técnica
+
+- **Aislamiento de Puerto**: El uso simultáneo de DBs locales y contenedores provoca fallos silenciosos de conexión. Centralizar en Docker garantiza que el entorno de desarrollo sea idéntico al de producción/agente.
+- **Eficiencia de Datos**: La eliminación física previene la acumulación de datos huérfanos y simplifica la gestión multitenant al no requerir filtros constantes de `status !== 'despedido'`.
+- **Integridad Git**: Un repositorio sin `.gitignore` es ruidoso e inseguro. El filtrado de archivos temporales de OpenSpec asegura que los _commits_ sean atómicos y significativos.
+
+### Lecciones Aprendidas
+
+- **Coste de la Complejidad**: Intentar implementar sistemas multi-rol antes de tener una infraestructura de persistencia 100% estable puede comprometer todo el proyecto. El _rollback_ temprano fue la decisión correcta para salvar la integridad.
+- **Depuración Multi-Capa**: Un error de "base de datos vacía" puede ser en realidad un conflicto de servicios redirigiendo el tráfico al host local en lugar del contenedor. Siempre verificar el origen del servicio con `netstat` o `tasklist`.
+
+---
+
+_Actualizado el 04/03/2026 - Proyecto estabilizado, dockerizado y bajo control de versiones Git._
+
+---
+
+## Funcionalidad v9: Dual Login System (Admin & Worker)
+
+### Registro de Prompts (Profesionalizado)
+
+> "Implementar un sistema de acceso dual que permita la entrada diferenciada de Administradores y Trabajadores. El sistema debe incluir: 1) Registro y Login para trabajadores mediante email y contraseña (vinculados a MariaDB). 2) Portal de autoservicio para el trabajador donde pueda gestionar su perfil personal (nombre, email, teléfono, contraseña). 3) Visualización del horario asignado por la empresa y consulta de estadísticas acumuladas (vacaciones y horas extra). 4) Interfaz dinámica de 'landing page' con un selector de roles para conmutar entre los flujos de Empresa y Trabajador."
+
+### Entendimiento de Antigravity
+
+Mi entendimiento de la tarea fue la necesidad de transformar la aplicación de una herramienta puramente administrativa a una plataforma de autoservicio colaborativa. Esto implicó:
+
+1.  **Bifurcación de la Seguridad**: Diferenciar sesiones mediante un flag `isWorker` en el JWT para aislar privilegios (permitir el acceso del trabajador a `/workers/me` pero denegar `/workers` general).
+2.  **Autenticación en MariaDB**: Transicionar la persistencia de los datos de los trabajadores hacia un modelo que incluya hashes de seguridad (Bcrypt), permitiendo el login directo del empleado.
+3.  **Consolidación de Datos**: Unificar la visualización de vacaciones (histórico local JSON) y perfiles (MariaDB) en una misma vista unificada para el trabajador, garantizando una experiencia de usuario (UX) coherente y premium.
+
+### Análisis de Resultado (Hitos Técnicos)
+
+1.  **Landing Page Multi-Rol**: Se rediseñó el portal de entrada con un conmutador dinámico (`switchRole`). El formulario de login adapta sus campos (Usuario/Pass vs Email/Pass) y el endpoint de destino según el rol seleccionado.
+2.  **Dashboard del Trabajador**: Implementación de una vista exclusiva (`worker-view`) con componentes de lectura/escritura para el perfil personal y tarjetas de resumen que consultan proactivamente el histórico de vacaciones y horas extra del empleado.
+3.  **Endpoints de Autoservicio (`/workers/me`)**: Creación de rutas GET y PUT protegidas que utilizan el ID del trabajador extraído del token JWT, garantizando que un empleado solo pueda manipular sus propios datos.
+4.  **Integración MariaDB + Bcrypt**: Actualización de `WorkersRepository` para soportar `password_hash`. El flujo de registro ahora cifra la contraseña antes de persistir, cumpliendo con los estándares de seguridad establecidos en la v7.
+
+---
+
+_Actualizado el 04/03/2026 - Implementación del Sistema de Login Dual y Portal del Trabajador completada._

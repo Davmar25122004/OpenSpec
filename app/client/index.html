@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión de Empleados</title>
+  <title>Workforce - Gestión de Plantilla</title>
   <meta name="description" content="Sistema de gestión de empleados y horarios laborales" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -18,23 +17,10 @@
         extend: {
           colors: {
             brand: {
-              50: '#f0f9ff',
-              100: '#e0f2fe',
-              200: '#bae6fd',
-              300: '#7dd3fc',
-              400: '#38bdf8',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              700: '#0369a1',
-              800: '#075985',
-              900: '#0c4a6e',
+              50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8',
+              500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e',
             },
-            neutral: {
-              950: '#0a0a0a',
-            }
-          },
-          animation: {
-            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            neutral: { 950: '#0a0a0a' }
           }
         }
       }
@@ -48,526 +34,361 @@
       .btn-primary-tw {
         @apply bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-brand-900/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
       }
-      .btn-secondary-tw {
-        @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 font-semibold py-3 px-6 rounded-xl transition-all duration-200 active:scale-95;
-      }
       .glass-card {
         @apply bg-neutral-900/80 backdrop-blur-xl border border-neutral-800 shadow-2xl rounded-3xl;
       }
     }
-    .d-none { display: none !important; } /* Compatibility for now */
   </style>
 </head>
-<body>
+<body class="bg-neutral-950 text-neutral-100 font-['Inter'] antialiased">
 
-  <!-- ── Landing Page (Auth/Company) ────────────────────────────────────── -->
-  <!-- ── Landing Page (Auth/Company) ────────────────────────────────────── -->
-  <div id="landing-page" class="flex flex-col justify-center items-center min-h-screen bg-neutral-950 p-6">
+  <!-- ── AUTH PORTAL ────────────────────────────────────────────────── -->
+  <div id="landing-page" class="flex flex-col justify-center items-center min-h-screen p-6">
     <div class="glass-card p-8 w-full max-w-md">
       <div class="text-center mb-10">
         <div class="inline-flex items-center justify-center w-20 h-20 bg-brand-500/10 rounded-3xl mb-4 border border-brand-500/20 shadow-inner">
-          <span class="text-4xl">🏢</span>
+          <span class="text-4xl">🚀</span>
         </div>
-        <h2 class="text-3xl font-bold text-white tracking-tight">Acceso Portal</h2>
-        <p class="text-neutral-400 mt-2">Bienvenido al sistema de gestión</p>
-      </div>
-      
-      <div class="flex p-1 bg-neutral-800/50 rounded-2xl mb-8" id="authTab" role="tablist">
-        <button class="flex-1 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 bg-brand-600 text-white shadow-lg shadow-brand-900/20 active" id="login-tab" type="button" role="tab" onclick="switchTab('login')">Ingresar</button>
-        <button class="flex-1 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 text-neutral-400 hover:text-neutral-200" id="register-tab" type="button" role="tab" onclick="switchTab('register')">Registrar</button>
+        <h2 class="text-3xl font-black text-white tracking-tight">Workforce</h2>
+        <p class="text-neutral-400 mt-2 text-sm font-medium">Gestión inteligente de personas</p>
       </div>
 
-      <div id="authTabContent">
-        <!-- Panel Login -->
+      <!-- Role Selector -->
+      <div class="flex p-1 bg-neutral-800/50 rounded-2xl mb-8" id="roleSelector">
+        <button class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300 bg-brand-600 text-white shadow-xl shadow-brand-900/40" id="role-admin" onclick="switchRole('admin')">Empresa</button>
+        <button class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300 text-neutral-400 hover:text-neutral-200" id="role-worker" onclick="switchRole('worker')">Trabajador</button>
+      </div>
+
+      <!-- Tab Selector -->
+      <div class="flex p-1 bg-neutral-800/50 rounded-2xl mb-8" id="authTab">
+        <button class="flex-1 py-2 text-xs font-bold rounded-xl transition-all bg-brand-600 text-white shadow-lg" id="login-tab" onclick="switchTab('login')">Ingresar</button>
+        <button class="flex-1 py-2 text-xs font-bold rounded-xl transition-all text-neutral-400" id="register-tab" onclick="switchTab('register')">Registrar</button>
+      </div>
+
+      <div id="authContent">
         <div id="login-pane" class="space-y-6">
-          <div id="login-alert" class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl hidden" role="alert"></div>
+          <div id="login-alert" class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl hidden"></div>
           <form id="login-form" class="space-y-5">
-
             <div>
-              <label for="login-company" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Empresa</label>
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Empresa</label>
               <select id="login-company" class="input-field appearance-none" required>
-                <option value="" disabled selected>Seleccione la empresa...</option>
+                <option value="" disabled selected>Seleccione...</option>
                 <option value="acme">Acme Corp</option>
                 <option value="globex">Globex</option>
                 <option value="stark">Stark Industries</option>
               </select>
             </div>
-            <div>
-              <label for="login-user" id="login-user-label" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Usuario</label>
+            <div id="login-user-group">
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Usuario Administrador</label>
               <input type="text" id="login-user" class="input-field" placeholder="Nombre de usuario" required>
             </div>
+            <div id="login-email-group" class="hidden">
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Email del Trabajador</label>
+              <input type="email" id="login-email" class="input-field" placeholder="ejemplo@empresa.com">
+            </div>
             <div>
-              <label for="login-pass" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Contraseña</label>
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Contraseña</label>
               <input type="password" id="login-pass" class="input-field" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-primary-tw w-full mt-4">Entrar al Portal</button>
+            <button type="submit" id="btn-submit-login" class="btn-primary-tw w-full mt-4">Entrar al Portal</button>
           </form>
         </div>
 
-        <!-- Panel Registro -->
         <div id="register-pane" class="space-y-6 hidden">
-          <div id="register-alert" class="p-4 text-sm rounded-xl hidden" role="alert"></div>
+          <div id="register-alert" class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl hidden"></div>
           <form id="register-form" class="space-y-5">
             <div>
-              <label for="reg-company" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Empresa a registrar</label>
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Empresa</label>
               <select id="reg-company" class="input-field appearance-none" required>
-                <option value="" disabled selected>Seleccione la empresa...</option>
+                <option value="" disabled selected>Seleccione...</option>
                 <option value="acme">Acme Corp</option>
                 <option value="globex">Globex</option>
                 <option value="stark">Stark Industries</option>
               </select>
             </div>
-            <div>
-              <label for="reg-user" id="reg-user-label" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Nuevo Usuario Admin</label>
-              <input type="text" id="reg-user" class="input-field" placeholder="Usuario deseado" required>
+            <div id="reg-admin-fields" class="space-y-5">
+              <div>
+                <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Nuevo Usuario Admin</label>
+                <input type="text" id="reg-user" class="input-field" placeholder="Usuario admin">
+              </div>
+            </div>
+            <div id="reg-worker-fields" class="space-y-5 hidden">
+              <div>
+                <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">ID Empleado</label>
+                <input type="text" id="reg-worker-id" class="input-field" placeholder="EMP-01">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Nombre Completo</label>
+                <input type="text" id="reg-worker-name" class="input-field" placeholder="Juan Pérez">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Email Profesional</label>
+                <input type="email" id="reg-worker-email" class="input-field" placeholder="juan@empresa.com">
+              </div>
             </div>
             <div>
-              <label for="reg-pass" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Contraseña Segura</label>
-              <input type="password" id="reg-pass" class="input-field" placeholder="Cree una contraseña" required>
+              <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Nueva Contraseña</label>
+              <input type="password" id="reg-pass" class="input-field" placeholder="••••••••" required>
             </div>
-            <button type="submit" id="btn-submit-reg" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-emerald-900/20 active:scale-95 w-full mt-4">Registrar Empresa</button>
+            <button type="submit" id="btn-submit-reg" class="btn-primary-tw w-full bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/20 mt-4">Crear Cuenta</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ── DASHBOARD AREA ──────────────────────────────────────────────── -->
+  <div id="app-container" class="hidden min-h-screen p-6 max-w-7xl mx-auto">
+    <nav class="flex items-center justify-between mb-12">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-brand-600/30">W</div>
+        <div>
+          <h1 class="text-2xl font-black text-white leading-none mb-1">Workforce</h1>
+          <p id="nav-company-id" class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Cargando...</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span id="nav-user-display" class="hidden md:block text-xs font-bold text-neutral-400 mr-4">Hola, <span class="text-white">Admin</span></span>
+        <button onclick="logout()" class="p-3 bg-neutral-900 border border-neutral-800 rounded-2xl text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ADMIN VIEW -->
+    <div id="admin-view" class="space-y-12 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <aside class="space-y-8">
+          <div class="glass-card overflow-hidden">
+            <div class="bg-brand-600/10 px-8 py-6 border-b border-brand-500/10">
+              <h3 class="text-lg font-black text-white">Nuevo Colaborador</h3>
+            </div>
+            <div class="p-8">
+              <form id="add-worker-form" class="space-y-4">
+                <div id="add-alert" class="hidden p-4 rounded-xl text-sm mb-4"></div>
+                <div class="grid grid-cols-2 gap-4">
+                  <input type="text" id="w-id" class="input-field" placeholder="ID" required>
+                  <input type="text" id="w-dept" class="input-field" placeholder="Depto" required>
+                </div>
+                <input type="text" id="w-name" class="input-field" placeholder="Nombre Completo" required>
+                <div class="grid grid-cols-2 gap-4">
+                  <input type="email" id="w-email" class="input-field" placeholder="Email">
+                  <input type="password" id="w-password" class="input-field" placeholder="Pass Opcional">
+                </div>
+                <input type="tel" id="w-phone" class="input-field" placeholder="Teléfono">
+                <button type="submit" class="btn-primary-tw w-full">Añadir a Plantilla</button>
+              </form>
+            </div>
+          </div>
+        </aside>
+        <section class="lg:col-span-2 space-y-8">
+          <div class="flex items-center justify-between">
+            <h2 class="text-3xl font-black text-white">Plantilla Activa</h2>
+            <div class="bg-neutral-900 px-4 py-2 rounded-2xl border border-neutral-800 flex items-center space-x-3">
+              <span class="text-xl font-black text-brand-500" id="worker-count">0</span>
+              <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Registrados</span>
+            </div>
+          </div>
+          <div id="worker-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="empty-msg" class="col-span-full py-20 text-center glass-card border-dashed">
+              <p class="text-neutral-500 italic">No hay trabajadores...</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- WORKER VIEW -->
+    <div id="worker-view" class="space-y-12 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+         <div class="glass-card p-8 space-y-8">
+            <div class="flex items-center space-x-6 mb-4">
+               <div id="my-avatar" class="w-20 h-20 bg-brand-600 rounded-3xl flex items-center justify-center text-4xl font-black text-white shadow-2xl">U</div>
+               <div>
+                  <h2 id="my-name-title" class="text-3xl font-black text-white">Cargando...</h2>
+                  <span id="my-id-badge" class="px-3 py-1 bg-neutral-800 text-neutral-400 text-xs font-mono rounded-full uppercase">ID: ...</span>
+               </div>
+            </div>
+            <form id="profile-form" class="space-y-5">
+               <div id="profile-alert" class="hidden p-4 rounded-xl text-sm"></div>
+               <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Nombre</label>
+                    <input type="text" id="my-name" class="input-field" required>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Departamento</label>
+                    <input type="text" id="my-dept" class="input-field opacity-50" readonly disabled>
+                  </div>
+               </div>
+               <div>
+                  <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Email Particular/Pro</label>
+                  <input type="email" id="my-email" class="input-field" required>
+               </div>
+               <div>
+                  <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Teléfono Movil</label>
+                  <input type="tel" id="my-phone" class="input-field">
+               </div>
+               <div class="pt-4 border-t border-neutral-800">
+                  <label class="block text-[10px] font-bold text-amber-500 mb-2 uppercase">Actualizar Seguridad (Opcional)</label>
+                  <input type="password" id="my-pass" class="input-field" placeholder="Nueva contraseña o dejar vacío">
+               </div>
+               <button type="submit" class="btn-primary-tw w-full mt-4">Guardar Mi Perfil</button>
+            </form>
+         </div>
+         <div class="space-y-8">
+            <div class="glass-card p-8 text-center sm:text-left">
+               <h3 class="text-sm font-black text-neutral-400 uppercase tracking-widest mb-6 border-b border-neutral-800 pb-4">Actividad Acumulada</h3>
+               <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-brand-500/5 p-6 rounded-3xl border border-brand-500/10 group cursor-pointer hover:bg-brand-500/10 transition-all" onclick="openMyVacations()">
+                    <span class="text-2xl mb-2 block">🏖</span>
+                    <div class="text-3xl font-black text-white" id="my-vacations">0d</div>
+                    <span class="text-[10px] font-black text-neutral-500 uppercase">Ver Mis Vacaciones</span>
+                  </div>
+                  <div class="bg-amber-500/5 p-6 rounded-3xl border border-amber-500/10 group cursor-pointer hover:bg-amber-500/10 transition-all" onclick="openMyHours()">
+                    <span class="text-2xl mb-2 block">⏱</span>
+                    <div class="text-3xl font-black text-white" id="my-hours">0h</div>
+                    <span class="text-[10px] font-black text-neutral-500 uppercase">Ver Mis Horas</span>
+                  </div>
+               </div>
+            </div>
+            <div class="glass-card p-8">
+               <h3 class="text-sm font-black text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-800 pb-4">Mi Jornada Semanal</h3>
+               <div id="my-schedule-list" class="space-y-2">
+                  <p class="text-neutral-500 italic text-sm text-center py-4">Cargando horario base...</p>
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODALS ────────────────────────────────────────────────── -->
+  <!-- VACATION DIALOG -->
+  <dialog id="vacation-dialog" class="glass-card w-full max-w-2xl p-0 overflow-hidden backdrop:bg-neutral-950/80">
+     <div class="p-8">
+        <div class="flex justify-between items-center mb-6">
+           <h4 class="text-2xl font-black text-white">Vacaciones: <span id="vacation-worker-name" class="text-brand-500"></span></h4>
+           <button onclick="document.getElementById('vacation-dialog').close()" class="text-neutral-500 text-3xl hover:text-white">&times;</button>
+        </div>
+        <div id="vacation-alert" class="hidden p-4 rounded-xl text-sm mb-4"></div>
+        <form id="vacation-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 items-end">
+           <input type="hidden" id="vacation-worker-id">
+           <div><label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Inicio</label><input type="date" id="vac-start" class="input-field" required></div>
+           <div><label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Fin</label><input type="date" id="vac-end" class="input-field" required></div>
+           <button type="submit" class="btn-primary-tw">Añadir</button>
+        </form>
+        <div class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
+           <table class="w-full text-left text-sm">
+              <thead class="bg-neutral-800 text-neutral-500 font-bold uppercase text-[10px]"><tr><th class="p-4">Periodo</th><th class="p-4 text-center">Días</th><th class="p-4 text-right">Acción</th></tr></thead>
+              <tbody id="vacation-history-body" class="divide-y divide-neutral-800"></tbody>
+           </table>
+        </div>
+     </div>
+  </dialog>
+
+  <!-- HOURS DIALOG -->
+  <dialog id="hours-dialog" class="glass-card w-full max-w-3xl p-0 overflow-hidden backdrop:bg-neutral-950/80">
+     <div class="p-8">
+        <div class="flex justify-between items-center mb-6">
+           <h4 class="text-2xl font-black text-white">Horas Extra: <span id="hours-worker-name" class="text-amber-500"></span></h4>
+           <button onclick="document.getElementById('hours-dialog').close()" class="text-neutral-500 text-3xl hover:text-white">&times;</button>
+        </div>
+        <div id="hours-alert" class="hidden p-4 rounded-xl text-sm mb-4"></div>
+        <form id="hours-form" class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8 items-end">
+           <input type="hidden" id="hours-worker-id">
+           <div class="col-span-1"><label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Fecha</label><input type="date" id="hr-date" class="input-field" required></div>
+           <div class="col-span-1"><label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Inicio</label><input type="time" id="hr-start" class="input-field" required></div>
+           <div class="col-span-1"><label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Fin</label><input type="time" id="hr-end" class="input-field" required></div>
+           <div class="col-span-1">
+              <label class="text-[10px] font-bold text-neutral-500 uppercase mb-1 block">Tipo</label>
+              <select id="hr-type" class="input-field appearance-none" required><option value="extra">Extra</option><option value="complementary">Compl.</option></select>
+           </div>
+           <button type="submit" class="btn-primary-tw bg-amber-600 hover:bg-amber-700 shadow-amber-900/20 col-span-2 sm:col-span-1">Añadir</button>
+        </form>
+        <div class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
+           <table class="w-full text-left text-sm">
+              <thead class="bg-neutral-800 text-neutral-500 font-bold uppercase text-[10px]"><tr><th class="p-4">Fecha</th><th class="p-4 text-center">Tramo</th><th class="p-4 text-center">Tipo</th><th class="p-4 text-right"></th></tr></thead>
+              <tbody id="hours-history-body" class="divide-y divide-neutral-800"></tbody>
+           </table>
+        </div>
+     </div>
+  </dialog>
+
+  <!-- ── CARD TEMPLATE ────────────────────────────────────────────── -->
+  <template id="worker-card-tpl">
+    <article class="glass-card p-6 flex flex-col group hover:border-brand-500/50 transition-all duration-300">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center space-x-3">
+          <div class="worker-card__avatar w-12 h-12 bg-brand-600 rounded-xl flex items-center justify-center text-xl font-black text-white shadow-lg"></div>
+          <div>
+            <h4 class="worker-card__name text-white font-bold leading-none mb-1"></h4>
+            <span class="worker-card__id text-[9px] font-mono bg-neutral-800 text-neutral-500 px-1.5 rounded"></span>
+            <span class="worker-card__dept text-[10px] text-neutral-500 font-bold uppercase ml-2"></span>
+          </div>
+        </div>
+        <button class="btn-remove text-neutral-700 hover:text-red-500 transition-colors p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <button class="btn-vacations p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-sky-500/10 hover:text-sky-400 transition-all">🏖 Vacas</button>
+        <button class="btn-hours p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-amber-500/10 hover:text-amber-400 transition-all">⏱ Horas</button>
+      </div>
+      <div class="border-t border-neutral-800 pt-3">
+         <button class="btn-toggle-schedule w-full text-[10px] font-black uppercase text-neutral-600 flex justify-between items-center px-1"><span>Horario Base</span> <span class="schedule-chevron">▼</span></button>
+         <div class="schedule-inline-section hidden mt-3 space-y-1">
+            <div class="grid grid-cols-2 items-center text-[10px] px-2 py-1 bg-neutral-900 rounded-lg">
+               <span class="font-bold text-neutral-500">L-V</span>
+               <input class="inline-sched-input bg-transparent text-right outline-none text-brand-400" data-day="monday" placeholder="--:--">
+            </div>
+            <button class="btn-save-inline-sched w-full py-1 text-[9px] font-black bg-brand-600/10 text-brand-500 rounded-lg mt-2">Guardar</button>
+            <span class="inline-sched-status text-[9px] block text-center mt-1 hidden font-bold"></span>
+         </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
   <script>
     function switchTab(tab) {
       const loginPane = document.getElementById('login-pane');
       const registerPane = document.getElementById('register-pane');
       const loginTab = document.getElementById('login-tab');
       const registerTab = document.getElementById('register-tab');
-      
       if (tab === 'login') {
-        loginPane.classList.remove('hidden');
-        registerPane.classList.add('hidden');
-        loginTab.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-900/20', 'active');
-        loginTab.classList.remove('text-neutral-400', 'hover:text-neutral-200');
-        registerTab.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-900/20', 'active');
-        registerTab.classList.add('text-neutral-400', 'hover:text-neutral-200');
+        loginPane.classList.remove('hidden'); registerPane.classList.add('hidden');
+        loginTab.classList.add('bg-brand-600', 'text-white', 'shadow-lg'); loginTab.classList.remove('text-neutral-400');
+        registerTab.classList.remove('bg-brand-600', 'text-white', 'shadow-lg'); registerTab.classList.add('text-neutral-400');
       } else {
-        loginPane.classList.add('hidden');
-        registerPane.classList.remove('hidden');
-        registerTab.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-900/20', 'active');
-        registerTab.classList.remove('text-neutral-400', 'hover:text-neutral-200');
-        loginTab.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-brand-900/20', 'active');
-        loginTab.classList.add('text-neutral-400', 'hover:text-neutral-200');
+        loginPane.classList.add('hidden'); registerPane.classList.remove('hidden');
+        registerTab.classList.add('bg-brand-600', 'text-white', 'shadow-lg'); registerTab.classList.remove('text-neutral-400');
+        loginTab.classList.remove('bg-brand-600', 'text-white', 'shadow-lg'); loginTab.classList.add('text-neutral-400');
+      }
+    }
+    window.currentRole = 'admin';
+    function switchRole(role) {
+      window.currentRole = role;
+      const btnAdmin = document.getElementById('role-admin');
+      const btnWorker = document.getElementById('role-worker');
+      const lUGroup = document.getElementById('login-user-group');
+      const lEMGroup = document.getElementById('login-email-group');
+      const rAF = document.getElementById('reg-admin-fields');
+      const rWF = document.getElementById('reg-worker-fields');
+      if (role === 'admin') {
+        btnAdmin.classList.add('bg-brand-600', 'text-white', 'shadow-xl'); btnAdmin.classList.remove('text-neutral-400');
+        btnWorker.classList.remove('bg-brand-600', 'text-white', 'shadow-xl'); btnWorker.classList.add('text-neutral-400');
+        lUGroup.classList.remove('hidden'); lEMGroup.classList.add('hidden');
+        rAF.classList.remove('hidden'); rWF.classList.add('hidden');
+        document.getElementById('btn-submit-login').textContent = 'Entrar al Portal';
+        document.getElementById('btn-submit-reg').textContent = 'Registrar Empresa';
+      } else {
+        btnWorker.classList.add('bg-brand-600', 'text-white', 'shadow-xl'); btnWorker.classList.remove('text-neutral-400');
+        btnAdmin.classList.remove('bg-brand-600', 'text-white', 'shadow-xl'); btnAdmin.classList.add('text-neutral-400');
+        lUGroup.classList.add('hidden'); lEMGroup.classList.remove('hidden');
+        rAF.classList.add('hidden'); rWF.classList.remove('hidden');
+        document.getElementById('btn-submit-login').textContent = 'Entrar como Trabajador';
+        document.getElementById('btn-submit-reg').textContent = 'Crear cuenta Trabajador';
       }
     }
   </script>
-
-
-
-  <!-- ── App Container (Hidden when not authenticated) ────────────────────── -->
-  <div id="app-container" class="hidden min-h-screen bg-neutral-950 text-neutral-100">
-
-    <!-- ── Header (Tailwind Navbar) ────────────────────────────────────── -->
-    <nav class="bg-neutral-900 border-b border-neutral-800 px-6 py-4 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
-      <div class="flex items-center space-x-3">
-        <span class="text-3xl" aria-hidden="true">👷</span>
-        <h1 class="text-xl font-bold tracking-tight text-white">
-          WorkForce <span class="ml-2 px-3 py-1 text-[10px] font-bold bg-brand-600/20 text-brand-400 border border-brand-500/20 rounded-full uppercase tracking-widest" id="nav-company-badge">Corp</span>
-        </h1>
-      </div>
-      <div class="flex items-center space-x-6">
-        <span id="nav-user" class="text-sm text-neutral-400 hidden">
-          Hola, <strong class="text-neutral-100 font-semibold italic">Operador</strong>
-        </span>
-        <button id="btn-nav-logout" class="px-5 py-2 text-xs font-bold bg-neutral-800 hover:bg-red-600 hover:text-white text-neutral-300 rounded-xl transition-all duration-300 active:scale-95 border border-neutral-700 hover:border-red-500">
-          CERRAR SESIÓN
-        </button>
-      </div>
-    </nav>
-
-
-
-    <!-- ── Main ─────────────────────────────────────────────────────────────── -->
-    <main class="max-w-7xl mx-auto px-6 py-12 lg:flex lg:gap-12">
-
-      <!-- ── Add Worker Panel ──────────────────────────────────────────────── -->
-      <aside class="lg:w-1/3 mb-12 lg:mb-0" aria-label="Añadir trabajador">
-        <div class="glass-card p-8 sticky top-28">
-          <div class="flex items-center space-x-3 mb-8">
-            <div class="w-10 h-10 bg-brand-500/10 rounded-xl flex items-center justify-center border border-brand-500/20 text-brand-400">
-              <span class="text-xl">＋</span>
-            </div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">Nuevo Perfil</h2>
-          </div>
-
-          <div id="form-banner" class="mb-6 p-4 rounded-xl text-sm hidden" aria-live="polite"></div>
-
-          <form id="add-worker-form" class="space-y-5" novalidate>
-            <div>
-              <label for="worker-id" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">ID EMPLEADO</label>
-              <input id="worker-id" name="id" type="text" class="input-field" required placeholder="p.ej. emp-001" />
-            </div>
-
-            <div>
-              <label for="worker-name" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">NOMBRE COMPLETO</label>
-              <input id="worker-name" name="name" type="text" class="input-field" required placeholder="Ana García" />
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">COMPAÑÍA</label>
-              <div class="input-field !py-3 flex items-center space-x-2 opacity-70 cursor-default select-none">
-                <span class="text-xs">🏢</span>
-                <span id="worker-company-display" class="text-neutral-300 text-sm font-medium">—</span>
-                <span class="ml-auto text-[10px] text-neutral-600 font-bold uppercase tracking-widest">Auto</span>
-              </div>
-              <input type="hidden" id="worker-company" name="company" />
-            </div>
-
-            <div>
-              <label for="worker-dept" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">DEPARTAMENTO</label>
-              <input id="worker-dept" name="department" type="text" class="input-field" placeholder="Operaciones" />
-            </div>
-
-            <div>
-              <label for="worker-email" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">EMAIL <span class="normal-case font-normal text-neutral-600">(opcional)</span></label>
-              <input id="worker-email" name="email" type="email" class="input-field" placeholder="empleado@empresa.com" />
-            </div>
-
-            <div>
-              <label for="worker-phone" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">TELÉFONO <span class="normal-case font-normal text-neutral-600">(opcional)</span></label>
-              <input id="worker-phone" name="phone" type="text" class="input-field" placeholder="+34 600 000 000" />
-            </div>
-
-            <div>
-              <label for="worker-password" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">CONTRASEÑA <span class="normal-case font-normal text-neutral-600">(opcional)</span></label>
-              <input id="worker-password" name="password" type="password" class="input-field" placeholder="••••••••" autocomplete="new-password" />
-            </div>
-
-            <button id="btn-add-worker" type="submit" class="btn-primary-tw w-full flex items-center justify-center space-x-2">
-              <span>Registrar Perfil</span>
-            </button>
-
-            <!-- Horario opcional -->
-            <div class="pt-2">
-              <button type="button" id="btn-toggle-schedule-form" onclick="toggleScheduleForm()" class="w-full flex items-center justify-between text-xs font-bold text-neutral-500 uppercase tracking-widest hover:text-neutral-300 transition-colors py-2">
-                <span>🗓 Definir Horario (opcional)</span>
-                <span id="schedule-form-chevron" class="transition-transform duration-300">▼</span>
-              </button>
-              <div id="schedule-form-fields" class="hidden mt-3 space-y-2 rounded-2xl border border-neutral-800 overflow-hidden">
-                <div class="grid grid-cols-2 bg-neutral-800/50 px-4 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-                  <span>Día</span><span>HH:MM-HH:MM</span>
-                </div>
-                <div class="divide-y divide-neutral-800 px-4">
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Lunes</label>
-                    <input id="new-sched-monday" name="sched-monday" type="text" class="input-field !py-1.5 !text-xs" placeholder="09:00-17:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Martes</label>
-                    <input id="new-sched-tuesday" name="sched-tuesday" type="text" class="input-field !py-1.5 !text-xs" placeholder="09:00-17:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Miércoles</label>
-                    <input id="new-sched-wednesday" name="sched-wednesday" type="text" class="input-field !py-1.5 !text-xs" placeholder="09:00-17:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Jueves</label>
-                    <input id="new-sched-thursday" name="sched-thursday" type="text" class="input-field !py-1.5 !text-xs" placeholder="09:00-17:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Viernes</label>
-                    <input id="new-sched-friday" name="sched-friday" type="text" class="input-field !py-1.5 !text-xs" placeholder="09:00-17:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Sábado</label>
-                    <input id="new-sched-saturday" name="sched-saturday" type="text" class="input-field !py-1.5 !text-xs" placeholder="10:00-14:00">
-                  </div>
-                  <div class="grid grid-cols-2 items-center py-2">
-                    <label class="text-xs text-neutral-400 font-medium">Domingo</label>
-                    <input id="new-sched-sunday" name="sched-sunday" type="text" class="input-field !py-1.5 !text-xs" placeholder="">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </aside>
-
-      <!-- ── Worker List ───────────────────────────────────────────────────── -->
-      <section class="lg:w-2/3" aria-label="Lista de trabajadores">
-        <div class="flex items-center justify-between mb-10">
-          <div>
-            <h2 class="text-3xl font-bold text-white tracking-tight">Plantilla Activa</h2>
-            <p class="text-neutral-500 mt-1">Gestión de recursos y horarios</p>
-          </div>
-          <div class="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
-             <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-             <span id="worker-count" class="text-lg font-bold text-neutral-200 tabular-nums">0</span>
-             <span class="text-xs font-semibold text-neutral-600 uppercase tracking-widest leading-none">Colaboradores</span>
-          </div>
-        </div>
-
-        <div id="list-banner" class="mb-6 p-4 rounded-xl text-sm hidden" aria-live="polite"></div>
-
-        <div id="worker-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6" aria-live="polite">
-          <div class="col-span-full py-20 text-center bg-neutral-900/40 rounded-3xl border border-dashed border-neutral-800" id="empty-msg">
-            <span class="text-4xl block mb-4">📂</span>
-            <p class="text-neutral-500 font-medium italic">Sincronizando base de datos…</p>
-          </div>
-        </div>
-      </section>
-
-
-
-    </main>
-
-  <!-- ── Schedule Dialog ──────────────────────────────────────────────────── -->
-  <dialog id="schedule-dialog" class="glass-card w-full max-w-xl p-0 overflow-hidden backdrop:backdrop-blur-sm backdrop:bg-neutral-950/50 open:animate-in open:fade-in open:zoom-in duration-300">
-    <div class="p-8">
-      <header class="flex justify-between items-center mb-8 pb-4 border-b border-neutral-800">
-        <h2 id="dialog-title" class="text-2xl font-bold text-white tracking-tight">Horario: <span id="dialog-worker-name" class="text-brand-400"></span></h2>
-        <button id="btn-close-dialog" class="p-2 text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl transition-all">&times;</button>
-      </header>
-
-      <div id="dialog-banner" class="mb-6 p-4 rounded-xl text-sm hidden" aria-live="polite"></div>
-
-      <form id="schedule-form" class="space-y-4" novalidate>
-        <input type="hidden" id="schedule-worker-id" />
-
-        <div class="rounded-2xl border border-neutral-800 overflow-hidden">
-          <div class="grid grid-cols-2 bg-neutral-800/50 px-6 py-3 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-            <span>Día Laboral</span>
-            <span>Rango Horario</span>
-          </div>
-
-          <div class="divide-y divide-neutral-800">
-            <div class="grid grid-cols-2 items-center px-6 py-3 hover:bg-neutral-900/50 transition-colors">
-              <label for="sched-monday" class="text-sm font-medium text-neutral-300">Lunes</label>
-              <input id="sched-monday" name="monday" type="text" class="input-field !py-2 !text-sm" placeholder="09:00-17:00" />
-            </div>
-            <div class="grid grid-cols-2 items-center px-6 py-3 hover:bg-neutral-900/50 transition-colors">
-              <label for="sched-tuesday" class="text-sm font-medium text-neutral-300">Martes</label>
-              <input id="sched-tuesday" name="tuesday" type="text" class="input-field !py-2 !text-sm" placeholder="09:00-17:00" />
-            </div>
-            <div class="grid grid-cols-2 items-center px-6 py-3 hover:bg-neutral-900/50 transition-colors">
-              <label for="sched-wednesday" class="text-sm font-medium text-neutral-300">Miércoles</label>
-              <input id="sched-wednesday" name="wednesday" type="text" class="input-field !py-2 !text-sm" placeholder="09:00-17:00" />
-            </div>
-            <div class="grid grid-cols-2 items-center px-6 py-3 hover:bg-neutral-900/50 transition-colors">
-              <label for="sched-thursday" class="text-sm font-medium text-neutral-300">Jueves</label>
-              <input id="sched-thursday" name="thursday" type="text" class="input-field !py-2 !text-sm" placeholder="09:00-17:00" />
-            </div>
-            <div class="grid grid-cols-2 items-center px-6 py-3 hover:bg-neutral-900/50 transition-colors">
-              <label for="sched-friday" class="text-sm font-medium text-neutral-300">Viernes</label>
-              <input id="sched-friday" name="friday" type="text" class="input-field !py-2 !text-sm" placeholder="09:00-17:00" />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex space-x-4 pt-6">
-          <button type="button" id="btn-cancel-schedule" class="btn-secondary-tw flex-1">Cancelar</button>
-          <button type="submit" class="btn-primary-tw flex-1">Guardar Cambios</button>
-        </div>
-      </form>
-    </div>
-  </dialog>
-
-  <!-- ── Vacations Dialog (Tailwind + jQuery UI) ────────────────────────── -->
-  <dialog id="vacation-dialog" class="glass-card w-full max-w-2xl p-0 overflow-hidden backdrop:backdrop-blur-sm backdrop:bg-neutral-950/50 open:animate-in open:fade-in open:zoom-in duration-300">
-    <div class="p-8">
-      <header class="flex justify-between items-center mb-8 pb-4 border-b border-neutral-800">
-        <h5 class="text-2xl font-bold text-white tracking-tight">
-          Vacaciones: <span id="vacation-worker-name" class="text-brand-400"></span>
-        </h5>
-        <button type="button" onclick="document.getElementById('vacation-dialog').close()" class="p-2 text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl transition-all">&times;</button>
-      </header>
-
-      <input type="hidden" id="vacation-worker-id" />
-      <div id="vacation-alert" class="mb-6 p-4 rounded-xl text-sm hidden" role="alert"></div>
-
-      <form id="vacation-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 items-end">
-        <div>
-          <label for="vac-start" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Fecha Inicio</label>
-          <input type="date" class="input-field" id="vac-start" required>
-        </div>
-        <div>
-          <label for="vac-end" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Fecha Fin</label>
-          <input type="date" class="input-field" id="vac-end" required>
-        </div>
-        <div>
-          <button type="submit" class="btn-primary-tw w-full">Solicitar</button>
-        </div>
-      </form>
-
-      <h6 class="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center">
-        <span class="mr-2">📅</span> Historial de Vacaciones
-      </h6>
-      <div class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
-        <table class="w-full text-left">
-          <thead class="bg-neutral-800/50 text-neutral-400 text-[10px] uppercase font-bold tracking-wider">
-            <tr>
-              <th class="px-6 py-4">Periodo</th>
-              <th class="px-6 py-4 text-center">Días</th>
-              <th class="px-6 py-4 text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="vacation-history-body" class="divide-y divide-neutral-800">
-            <tr><td colspan="3" class="px-6 py-8 text-center text-neutral-500 italic">Cargando…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- ── Extra Hours Dialog (Tailwind) ─────────────────────────────────── -->
-  <dialog id="hours-dialog" class="glass-card w-full max-w-4xl p-0 overflow-hidden backdrop:backdrop-blur-sm backdrop:bg-neutral-950/50 open:animate-in open:fade-in open:zoom-in duration-300">
-    <div class="p-8">
-      <header class="flex justify-between items-center mb-8 pb-4 border-b border-neutral-800">
-        <h5 class="text-2xl font-bold text-white tracking-tight">
-          Horas Extra: <span id="hours-worker-name" class="text-amber-400"></span>
-        </h5>
-        <button type="button" onclick="document.getElementById('hours-dialog').close()" class="p-2 text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl transition-all">&times;</button>
-      </header>
-
-      <input type="hidden" id="hours-worker-id" />
-      <div id="hours-alert" class="mb-6 p-4 rounded-xl text-sm hidden" role="alert"></div>
-
-      <form id="hours-form" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10 items-end">
-        <div class="md:col-span-1">
-          <label for="hr-date" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Fecha</label>
-          <input type="date" class="input-field" id="hr-date" required>
-        </div>
-        <div class="md:col-span-1">
-          <label for="hr-start" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Inicio</label>
-          <input type="time" class="input-field" id="hr-start" required>
-        </div>
-        <div class="md:col-span-1">
-          <label for="hr-end" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Fin</label>
-          <input type="time" class="input-field" id="hr-end" required>
-        </div>
-        <div class="md:col-span-1">
-          <label for="hr-type" class="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Tipo</label>
-          <select class="input-field appearance-none" id="hr-type" required>
-            <option value="extra">Horas Extra</option>
-            <option value="complementary">Complementarias</option>
-          </select>
-        </div>
-        <div class="md:col-span-1">
-          <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-amber-900/20 active:scale-95 w-full">Registrar</button>
-        </div>
-      </form>
-
-      <h6 class="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center">
-        <span class="mr-2">⏱</span> Registro de Horas
-      </h6>
-      <div class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
-        <table class="w-full text-left">
-          <thead class="bg-neutral-800/50 text-neutral-400 text-[10px] uppercase font-bold tracking-wider">
-            <tr>
-              <th class="px-6 py-4">Fecha</th>
-              <th class="px-6 py-4 text-center">Horario</th>
-              <th class="px-6 py-4 text-center">Tipo</th>
-              <th class="px-6 py-4 text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="hours-history-body" class="divide-y divide-neutral-800">
-            <tr><td colspan="4" class="px-6 py-8 text-center text-neutral-500 italic">Cargando…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- ── Worker Card Template ──────────────────────────────────────────────── -->
-  <template id="worker-card-tpl">
-    <article class="glass-card p-6 flex flex-col group hover:border-brand-500/50 transition-all duration-500 hover:shadow-brand-500/10 hover:-translate-y-1">
-      <div class="flex items-start justify-between mb-6">
-        <div class="flex items-center space-x-4">
-          <div class="worker-card__avatar w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-brand-600/30 group-hover:scale-110 transition-transform duration-500"></div>
-          <div class="flex flex-col">
-            <strong class="worker-card__name text-lg font-bold text-white leading-tight mb-1"></strong>
-            <div class="flex items-center space-x-2">
-              <span class="worker-card__id text-[10px] font-mono bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded border border-neutral-700 uppercase tracking-tighter leading-none"></span>
-              <span class="worker-card__dept text-xs text-neutral-500 font-medium"></span>
-            </div>
-          </div>
-        </div>
-        <button class="btn-remove p-2 text-neutral-600 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all active:scale-90" title="Eliminar perfil">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <button class="btn-vacations flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-800/50 border border-neutral-700/50 hover:bg-sky-500/10 hover:border-sky-500/30 transition-all group/btn" title="Gestionar Vacaciones">
-          <span class="text-xl mb-1 group-hover/btn:scale-110 transition-transform">🏖</span>
-          <span class="text-[10px] uppercase font-bold tracking-widest text-neutral-400 group-hover/btn:text-sky-400">Vacaciones</span>
-        </button>
-        <button class="btn-hours flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-800/50 border border-neutral-700/50 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all group/btn" title="Registrar Horas Extra">
-          <span class="text-xl mb-1 group-hover/btn:scale-110 transition-transform">⏱</span>
-          <span class="text-[10px] uppercase font-bold tracking-widest text-neutral-400 group-hover/btn:text-amber-400">Extras</span>
-        </button>
-      </div>
-
-      <!-- Sección Horario Inline -->
-      <div class="mt-3 border-t border-neutral-800/60 pt-3">
-        <button class="btn-toggle-schedule w-full flex items-center justify-between text-[10px] font-bold text-neutral-500 uppercase tracking-widest hover:text-brand-400 transition-colors py-1">
-          <span class="flex items-center space-x-1.5"><span>🗓</span><span>Horario</span></span>
-          <span class="schedule-chevron transition-transform duration-300 text-neutral-600">▼</span>
-        </button>
-        <div class="schedule-inline-section hidden mt-3">
-          <div class="rounded-xl border border-neutral-800 overflow-hidden">
-            <div class="divide-y divide-neutral-800">
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Lun</span>
-                <input class="inline-sched-input" data-day="monday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Mar</span>
-                <input class="inline-sched-input" data-day="tuesday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Mié</span>
-                <input class="inline-sched-input" data-day="wednesday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Jue</span>
-                <input class="inline-sched-input" data-day="thursday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Vie</span>
-                <input class="inline-sched-input" data-day="friday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Sáb</span>
-                <input class="inline-sched-input" data-day="saturday" type="text" placeholder="–" />
-              </div>
-              <div class="grid grid-cols-2 items-center px-3 py-1.5 hover:bg-neutral-900/50 transition-colors">
-                <span class="text-[10px] uppercase font-semibold text-neutral-500">Dom</span>
-                <input class="inline-sched-input" data-day="sunday" type="text" placeholder="–" />
-              </div>
-            </div>
-          </div>
-          <div class="mt-2 flex items-center gap-2">
-            <button class="btn-save-inline-sched flex-1 py-1.5 text-[11px] font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-xl transition-all active:scale-95">Guardar</button>
-            <span class="inline-sched-status text-[11px] font-medium hidden"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Individual Counters (Feature 4.1) -->
-      <div class="mt-4 pt-4 border-t border-neutral-800/50 flex justify-between items-center px-1">
-         <div class="flex items-center space-x-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-            <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Vac: <span class="text-neutral-300 counter-vac">0d</span></span>
-         </div>
-         <div class="flex items-center space-x-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-            <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Hrs: <span class="text-neutral-300 counter-hrs">0h</span></span>
-         </div>
-      </div>
-    </article>
-  </template>
-
-  <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
-
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
