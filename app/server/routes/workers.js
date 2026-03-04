@@ -46,9 +46,20 @@ router.get('/', async (req, res) => {
       const hours = db.hours?.[worker.id] || [];
 
       let vacDays = 0;
+      let onVacationNow = false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
       vacations.forEach(v => {
         const s = new Date(v.startDate);
+        s.setHours(0,0,0,0);
         const e = new Date(v.endDate);
+        e.setHours(23,59,59,999);
+        
+        if (today >= s && today <= e) {
+          onVacationNow = true;
+        }
+        
         vacDays += Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
       });
 
@@ -63,7 +74,8 @@ router.get('/', async (req, res) => {
         ...worker,
         company: worker.company_id,
         vacationDays: vacDays,
-        overtimeHours: parseFloat(totalHrs.toFixed(1))
+        overtimeHours: parseFloat(totalHrs.toFixed(1)),
+        onVacationNow
       };
     });
 
@@ -75,7 +87,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', validateWorker, async (req, res) => {
-  const { id, name, company, department, email, phone, password } = req.body;
+  const { id, name, company, department, email, phone, password, schedule } = req.body;
   
   if (company !== req.user.companyId) {
     return res.status(403).json({ error: 'Solo puedes crear trabajadores en tu propia empresa.' });
@@ -104,6 +116,15 @@ router.post('/', validateWorker, async (req, res) => {
       status: 'activo',
       passwordHash: hash
     });
+
+    if (schedule && typeof schedule === 'object' && Object.keys(schedule).length > 0) {
+      const { readDB, writeDB } = require('../db');
+      const db = readDB();
+      db.schedules = db.schedules || {};
+      db.schedules[id] = schedule;
+      writeDB(db);
+    }
+
     res.status(201).json({ id, name, company, department, email, status: 'activo' });
   } catch (err) {
     console.error('POST /workers error:', err);
