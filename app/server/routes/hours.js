@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const { readDB, writeDB } = require('../db');
 const { checkHoursCollision } = require('../services/hoursCollision');
-const WorkersRepository = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+const WorkersRepository = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
 
 const router = express.Router({ mergeParams: true });
 

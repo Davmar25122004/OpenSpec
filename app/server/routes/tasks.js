@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const joi = require('joi');
 const validate = require('../middleware/joiValidate');
-const TasksRepository = require('../../../openspec-mariadb-adapter/db/TasksRepository');
+const TasksRepository = require('../../../packages/openspec-mariadb-adapter/db/TasksRepository');
 
 const createTaskSchema = joi.object({
   change_id: joi.string().max(128).required(),

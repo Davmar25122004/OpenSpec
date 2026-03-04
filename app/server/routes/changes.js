@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const joi = require('joi');
 const validate = require('../middleware/joiValidate');
-const ChangesRepository = require('../../../openspec-mariadb-adapter/db/ChangesRepository');
+const ChangesRepository = require('../../../packages/openspec-mariadb-adapter/db/ChangesRepository');
 
 // Validation schemas
 const createChangeSchema = joi.object({

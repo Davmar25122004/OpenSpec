@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const UsersRepository = require('../../../openspec-mariadb-adapter/db/UsersRepository');
+const UsersRepository = require('../../../packages/openspec-mariadb-adapter/db/UsersRepository');
 const { JWT_SECRET } = require('../middleware/requireAuth');
 
 const router = express.Router();
@@ -55,10 +55,10 @@ router.post('/login', async (req, res) => {
   const { username, password, companyId } = value;
 
   try {
-    console.log('[DEBUG] Admin Login Attempt:', { username, companyId });
+    if (IS_DEV) console.log('[DEBUG] Admin Login Attempt:', { username, companyId });
     const user = await UsersRepository.findByUsername(username);
     if (!user || user.company_id !== companyId) {
-      console.log('[DEBUG] User not found or company mismatch:', user ? 'company mismatch' : 'not found');
+      if (IS_DEV) console.log('[DEBUG] User not found or company mismatch');
       return res.status(401).json({ error: 'Credenciales inválidas o empresa incorrecta' });
     }
 
@@ -78,13 +78,21 @@ router.post('/login', async (req, res) => {
 // ── TRABAJADOR: Registro y Login ──────────────────────────────────────────
 
 const workerAuthSchema = Joi.object({
-  id: Joi.string().required(),
-  name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  companyId: Joi.string().required(),
-  department: Joi.string().allow('', null)
+  id: Joi.string().max(50).required(),
+  name: Joi.string().min(2).max(100).required(),
+  email: Joi.string().email().max(100).required(),
+  password: Joi.string().min(6).max(200).required(),
+  companyId: Joi.string().alphanum().max(50).required(),
+  department: Joi.string().max(100).allow('', null)
 });
+
+const workerLoginSchema = Joi.object({
+  email: Joi.string().email().max(100).required(),
+  password: Joi.string().min(6).max(200).required(),
+  companyId: Joi.string().alphanum().max(50).required()
+});
+
+const IS_DEV = process.env.NODE_ENV !== 'production';
 
 router.post('/worker/register', async (req, res) => {
   const { error, value } = workerAuthSchema.validate(req.body);
@@ -129,12 +137,12 @@ router.post('/worker/register', async (req, res) => {
         passwordHash: hash 
       });
       const token = jwt.sign({ username: name || workerToUpdate.name, workerId: workerToUpdate.id, companyId, isWorker: true }, JWT_SECRET, { expiresIn: '12h' });
-      res.status(200).json({ token, workerId: workerToUpdate.id, name: name || workerToUpdate.name, isWorker: true });
+      res.status(200).json({ token, workerId: workerToUpdate.id, name: name || workerToUpdate.name, companyId, isWorker: true });
     } else {
       // Creamos uno nuevo
       await WorkersRepo.create({ id, name, companyId, email, department, passwordHash: hash });
       const token = jwt.sign({ username: name, workerId: id, companyId, isWorker: true }, JWT_SECRET, { expiresIn: '12h' });
-      res.status(201).json({ token, workerId: id, name, isWorker: true });
+      res.status(201).json({ token, workerId: id, name, companyId, isWorker: true });
     }
 
   } catch (err) {
@@ -144,16 +152,17 @@ router.post('/worker/register', async (req, res) => {
 });
 
 router.post('/worker/login', async (req, res) => {
-  const { email, password, companyId } = req.body;
-  if (!email || !password || !companyId) return res.status(400).json({ error: 'Datos incompletos' });
+  const { error, value } = workerLoginSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
+  const { email, password, companyId } = value;
   const WorkersRepo = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
 
   try {
-    console.log('[DEBUG] Worker Login Attempt:', { email, companyId });
+    if (IS_DEV) console.log('[DEBUG] Worker Login Attempt:', { email, companyId });
     const worker = await WorkersRepo.findByEmail(email);
     if (!worker || worker.company_id !== companyId) {
-      console.log('[DEBUG] Worker not found or company mismatch:', worker ? 'company mismatch' : 'not found');
+      if (IS_DEV) console.log('[DEBUG] Worker not found or company mismatch');
       return res.status(401).json({ error: 'Credenciales inválidas o empresa incorrecta' });
     }
 
@@ -171,7 +180,7 @@ router.post('/worker/login', async (req, res) => {
       isWorker: true 
     }, JWT_SECRET, { expiresIn: '12h' });
 
-    res.json({ token, workerId: worker.id, name: worker.name, isWorker: true });
+    res.json({ token, workerId: worker.id, name: worker.name, companyId: worker.company_id, isWorker: true });
 
   } catch (err) {
     console.error('Worker login error:', err);

@@ -85,3 +85,17 @@ CREATE TABLE IF NOT EXISTS workers (
     updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS vacation_requests (
+    id             BIGINT        NOT NULL AUTO_INCREMENT,
+    user_id        VARCHAR(128)  NOT NULL,
+    start_date     DATE          NOT NULL,
+    end_date       DATE          NOT NULL,
+    status         ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY fk_vacation_worker (user_id) REFERENCES workers(id) ON DELETE CASCADE,
+    INDEX idx_user_status (user_id, status)
+) ENGINE=InnoDB;
+

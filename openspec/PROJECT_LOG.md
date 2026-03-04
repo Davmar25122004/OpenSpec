@@ -456,7 +456,7 @@ _Actualizado el 04/03/2026 - Proyecto estabilizado, dockerizado y bajo control d
 
 ## Funcionalidad v9: Dual Login System (Admin & Worker)
 
-### Registro de Prompts (Profesionalizado)
+### Registro de Prompts
 
 > "Implementar un sistema de acceso dual que permita la entrada diferenciada de Administradores y Trabajadores. El sistema debe incluir: 1) Registro y Login para trabajadores mediante email y contraseña (vinculados a MariaDB). 2) Portal de autoservicio para el trabajador donde pueda gestionar su perfil personal (nombre, email, teléfono, contraseña). 3) Visualización del horario asignado por la empresa y consulta de estadísticas acumuladas (vacaciones y horas extra). 4) Interfaz dinámica de 'landing page' con un selector de roles para conmutar entre los flujos de Empresa y Trabajador."
 
@@ -475,6 +475,146 @@ Mi entendimiento de la tarea fue la necesidad de transformar la aplicación de u
 3.  **Endpoints de Autoservicio (`/workers/me`)**: Creación de rutas GET y PUT protegidas que utilizan el ID del trabajador extraído del token JWT, garantizando que un empleado solo pueda manipular sus propios datos.
 4.  **Integración MariaDB + Bcrypt**: Actualización de `WorkersRepository` para soportar `password_hash`. El flujo de registro ahora cifra la contraseña antes de persistir, cumpliendo con los estándares de seguridad establecidos en la v7.
 
+_Actualizado el 04/03/2026 - Implementación del Sistema de Login Dual y Portal del Trabajador completada._
+
 ---
 
-_Actualizado el 04/03/2026 - Implementación del Sistema de Login Dual y Portal del Trabajador completada._
+## Funcionalidad v10: Daily Schedule & UX/UI Updates
+
+### Registro de Prompts
+
+> "Delegar la gestión de solicitudes de vacaciones y horas extra exclusivamente al rol de administrador de la plataforma. Implementar la capacidad de definir un horario base detallado (Lunes a Domingo) durante el alta de un nuevo colaborador, integrando una interfaz desplegable en el formulario de creación para optimizar el espacio. Habilitar la visualización y edición granular de los 7 días de la semana en el perfil de cada empleado. Finalmente, incorporar un indicador de estado dinámico ('Vacaciones') en la vista de tarjetas de la plantilla activa que evalúe y señale en tiempo real si el trabajador se encuentra actualmente en periodo vacacional."
+
+### Análisis de Resultado (Hitos Técnicos de UX/UI)
+
+1. **Gestión Granular de Horarios (7-Day Grid)**:
+   - Se reemplazó el input genérico de "L-V" por una cuadrícula dinámica que permite a los administradores asignar horas de entrada y salida específicas para los **7 días de la semana** (incluidos fines de semana).
+   - Se actualizó tanto el formulario de "Nuevo Colaborador" como la sección "Horario Base" dentro de la tarjeta de cada empleado activo para usar esta misma cuadrícula.
+   - El formulario de creación se mejoró a nivel de experiencia de usuario al convertir la sección del horario en un componente **desplegable (collapsible)**, para no saturar visualmente el alta rápida de trabajadores si no se desea asignar un horario inicialmente.
+
+2. **Indicador Visual Binario de Vacaciones en Tiempo Real**:
+   - Se añadió un cálculo integrado en la ruta `GET /workers` del backend. El servidor itera los rangos de fechas (`startDate` a `endDate`) registrados en la persistencia local para cada usuario y compara si la marca temporal del sistema (`new Date()`) intersecta ese intervalo.
+   - Si se detecta colisión, el backend inyecta un flag booleano `onVacationNow` en el flujo JSON hacia el frontend.
+   - Apoyándose en este metadato, el cliente UI (Vanilla JS + Tailwind) renderiza automáticamente una etiqueta ("Vacaciones" estilizada como badge cyan) contigua al nombre del empleado, proveyendo al administrador de un estado de presencia inequívoco.
+
+### Justificación Técnica
+
+- **Estandarización Estructural del Horario**: La asignación de horarios mutó de una cadena de texto a un diccionario de datos JSON tipificado por días de la semana (`monday`, `tuesday`...). Esta abstracción prepara el modelo de datos para futuras implementaciones de validación temporal o consultas complejas en capas relacionales.
+- **Offloading Computacional al Backend**: Computar si un empleado se encuentra vacante obliga a ejecutar comprobaciones de rangos fecha-hora iterativamente. La resolución de mantener dicha lógica en Node.js mitiga cuellos de botella en la renderización del DOM del cliente web, entregando propiedades computadas simples (booleanos) consistentes con el patrón MVC.
+
+---
+
+## Funcionalidad v11: Unified Request Management & Dual Login Workflow
+
+### Registro de Prompts
+
+> "Implementar un sistema de autenticación estable para el perfil de trabajador que resuelva cierres de sesión inesperados. Desarrollar un buzón de gestión unificado para el administrador que agrupe solicitudes de vacaciones y reporte de horas extra, integrando contadores de notificaciones y componentes desplegables. Asegurar la integridad de la identidad corporativa en el dashboard del empleado y restringir sus capacidades de edición en los módulos de historial, estableciendo perfiles de consulta de solo lectura para garantizar la transparencia sin comprometer la autoridad administrativa."
+
+### Análisis de Resultado (Hitos de Integración MaríaDB + UX)
+
+1. **Persistencia e Infraestructura (Base de Datos)**:
+   - **Schema**: Creación de la tabla `hour_requests` con campos para `worker_id`, `date`, `start_time`, `end_time`, `type` y `status` (enum: pending, approved, rejected).
+   - **Adaptador MariaDB**: Implementación del `HourRequestsRepository.js` para centralizar las operaciones CRUD de las nuevas peticiones.
+
+2. **Arquitectura del Servidor (Backend Node.js)**:
+   - **Rutas**: Creación de `allRequests.js` para inyectar lógica de agregación de datos (Merge & Sort) de múltiples modelos.
+   - **Middleware**: Refactorización de la validación de tokens en `requireAuth.js` para soportar consistentemente los campos `workerId` y `companyId` en la sesión.
+
+3. **Estructura e Interfaz (HTML/CSS)**:
+   - **DOM**: Incorporación de IDs únicos para el nuevo formulario de horas extra (`my-hour-request-form`) y el buzón unificado de administración.
+   - **Styling (CSS/Tailwind)**: Aplicación de reglas de diseño dinámico para badges de notificación reactivos y micro-interacciones en los componentes colapsables del dashboard.
+   - **Componentización**: Implementación de estados visuales condicionales para las modales, eliminando elementos interactivos según el rol del usuario.
+
+4. **Lógica de Cliente (JavaScript)**:
+   - **Sincronización de Sesión**: Implementación de `loadWorkerProfile` con capacidad de autorrecuperación de metadatos de empresa.
+   - **Control de Flujo**: Desarrollo de la función `handleRequest` para gestionar estados de aprobación bidireccional mediante llamadas asíncronas (`fetchWithAuth`).
+   - **Reactividad**: Automatización de la actualización del conteo de pendientes mediante promesas encadenadas tras cada acción administrativa.
+
+### Justificación Técnica
+
+- **Coherencia de Dominio**: Al centralizar las solicitudes en un buzzón único, se reduce la fatiga cognitiva del administrador y se asegura que ninguna petición quede desatendida.
+- **Seguridad en la Inyección de Datos**: El flujo de aprobación de horas no es una simple inserción; el backend re-valida la existencia del trabajador y la integridad de los tiempos antes de sumarlos al registro histórico, previniendo discrepancias en la nómina o duplicidad de reportes.
+
+---
+
+## Funcionalidad v12: Security Hardening & Input Integrity
+
+### Registro de Prompts
+
+> "Realizar un proceso de Hardening integral en la capa de datos y lógica de negocio para mitigar vulnerabilidades críticas y asegurar la inexpugnabilidad de la base de datos MariaDB. Implementar la gestión segura de secretos mediante variables de entorno, blindar el sistema contra la exposición de errores internos (Stack Traces) y establecer un motor de validación estricto (Joi) para las peticiones de entrada. Adicionalmente, integrar lógica de integridad temporal en los formularios de vacaciones y horas extras para prevenir la inserción de registros cronológicamente inconsistentes o anacrónicos, garantizando la robustez operativa bajo cualquier circunstancia."
+
+### Análisis de Resultado (Seguridad Proactiva e Integridad)
+
+1. **Infraestructura y Secretos (Security Layer)**:
+   - **Gestión de Entorno**: Migración del `JWT_SECRET` a un archivo `.env` externo con implementación de un guard `fail-fast` que previene el arranque del servidor si el secreto está ausente.
+   - **Sanitización de Errores**: Refactorización de todos los bloques `catch` en las rutas de la API para interceptar y loguear internamente los errores del motor (stack traces) mientras se retornan mensajes genéricos y seguros al cliente.
+
+2. **Arquitectura del Servidor (Backend Node.js)**:
+   - **Validación de Esquemas**: Integración de la librería `Joi` para definir contratos de datos estrictos en las rutas de registro y login de trabajadores.
+   - **Lógica de Integridad de Datos**: Implementación de comprobaciones de lógica de negocio para peticiones de vacaciones, asegurando que `startDate < endDate` y que todos los tipos de horas extras correspondan al enumerado definido.
+
+3. **Estructura e Interfaz (JavaScript/Client)**:
+   - **Validación Preventiva**: Refactorización de `app.js` para incluir validaciones en el lado del cliente (Client-side validation) que impiden el envío de formularios de vacaciones si las fechas son pasadas o cronológicamente inválidas.
+   - **UX de Seguridad**: Implementación de alertas de retroalimentación inmediata (`🚫 Vacaciones imposibles`) para reducir la carga en el servidor y mejorar la experiencia del usuario final.
+
+### Justificación Técnica
+
+- **Defensa en Profundidad**: La combinación de validaciones en frontend, esquemas en backend y el uso estricto de Prepared Statements en la base de datos crea múltiples capas de defensa contra entradas malformadas o malintencionadas.
+- **Prevención de Regresión Temporal**: La restricción de fechas pasadas asegura que el historial laboral se mantenga como un registro de eventos reales o futuros, evitando la manipulación de datos históricos que podrían afectar informes de auditoría o nóminas.
+
+## Funcionalidad v13: Advanced Clocking Management, Geolocation & Weekly History
+
+### Registro de Prompts
+
+> "Implementar un sistema de fichaje (Entrada/Salida) que registre la ubicación exacta y el dispositivo. El sistema debe impedir fichar dos veces el mismo estado y permitir ver el histórico de jornadas agrupado por semanas desde el panel de administrador. Refinar la visualización para mostrar solo la última sesión completa de cada día en el historial, eliminando redundancias de metadatos de dispositivo para una interfaz limpia y profesional."
+
+### Análisis de Resultado (Trazabilidad y Control de Jornada)
+
+1. **Persistencia e Infraestructura (MariaDB Layer)**:
+   - **Esquema de Datos**: Creación de la tabla `clock_events` para el registro atómico de eventos `ENTRY`/`EXIT`.
+   - **Optimización de Consultas**: Implementación de lógica de filtrado por IDs únicos y timestamps descendentes en `ClockEventsRepository.js` para asegurar la integridad del estado actual del trabajador.
+
+2. **Arquitectura del Servidor (Backend Node.js)**:
+   - **Servicio de Fichaje**: Desarrollo de `ClockingService.js` para gestionar la lógica de "Sesión en Curso" y validaciones de estado cruzadas.
+   - **Core de Historial**: Implementación de endpoints específicos (`/worker/:id/history`) con capacidad de streaming de eventos históricos para auditoría administrativa.
+
+3. **Estructura e Interfaz (Dashboard & UX)**:
+   - **Dashboard Dinámico**: Integración del componente "Control de Jornada" en el panel del trabajador, con estados visuales reactivos ("En Jornada" 🚀 / "Fuera de Servicio" 🏠).
+   - **Detalle de Sesión**: Implementación de micro-detalles en el dashboard que muestran la hora de entrada y el estado "En curso" mediante animaciones síncronas.
+   - **Administración Detallada**: Creación de una modal de historial estructurada por semanas, utilizando algoritmos de agrupación temporal en el cliente.
+
+4. **Lógica de Cliente (JavaScript/Geolocation)**:
+   - **Geoposicionamiento**: Integración estricta con la API de Geolocation del navegador para el registro de coordenadas en tiempo real.
+   - **Motor de Emparejamiento**: Desarrollo de lógica en `app.js` para reconstruir sesiones laborales (Entrada + Salida) a partir de una lista lineal de eventos, filtrando duplicidades diarias para mantener la simplicidad operativa.
+
+### Justificación Técnica
+
+- **Integridad de Estado**: La persistencia atómica de eventos (en lugar de actualizar una sesión abierta) garantiza que el historial sea inmutable y auditable, permitiendo la reconstrucción de cualquier jornada incluso ante fallos de red o cierres de sesión inesperados.
+- **Eficiencia en el Procesamiento de Datos**: Delegar la agrupación semanal y el emparejamiento de sesiones al cliente web reduce la latencia del servidor y permite una renderización por demanda (`Lazy Loading` conceptual), optimizando el rendimiento de la base de datos MariaDB.
+
+## Funcionalidad v14: Project Architecture Reorganization
+
+### Registro de Prompts
+
+> "Organiza las carpetas del proyecto, eliminando alguna innecesaria y agrupando cosas que estén sueltas, sin borrar nada importante."
+
+### Análisis de Resultado (Higiene y Arquitectura)
+
+1. **Estructura de Paquetes (Modularization)**:
+   - **Workspace de Paquetes**: Creación del directorio `packages/` para centralizar dependencias internas.
+   - **Migración del Adaptador**: Reubicación de `openspec-mariadb-adapter` a `packages/`, estableciendo una separación clara entre la infraestructura de datos y la aplicación principal.
+
+2. **Limpieza de la Raíz (Root Sanitization)**:
+   - **Módulo Tooling**: Consolidación de todos los scripts de utilidad (`get_proposal.js`, etc.) en el directorio `tooling/`.
+
+3. **Integridad de Referencias (Backend Pathing)**:
+   - **Refactorización de Rutas**: Actualización masiva de todos los puntos de entrada de la API y servicios para reflejar la nueva jerarquía de archivos, asegurando la continuidad operativa del servidor Node.js.
+
+### Justificación Técnica
+
+- **Escalabilidad**: Segregar el adaptador de base de datos en un paquete propio facilita su mantenimiento independiente y su posible reutilización en otros servicios o micro-servicios futuros.
+- **Mantenibilidad**: Reducir el ruido visual en la raíz del proyecto permite a los desarrolladores identificar rápidamente los componentes principales del sistema, siguiendo estándares de la industria para monorepos o proyectos de gran escala.
+
+---
+
+_Actualizado el 05/03/2026 - Reorganización completa de la estructura del proyecto, migración de adaptadores a `packages/` y limpieza de scripts de utilidad en `tooling/`._

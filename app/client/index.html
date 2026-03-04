@@ -160,6 +160,18 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <aside class="space-y-8">
           <div class="glass-card overflow-hidden">
+             <button type="button" onclick="togglePendingVacations()" class="w-full bg-brand-500/10 px-8 py-6 border-b border-brand-500/10 flex justify-between items-center hover:bg-brand-500/20 transition-colors">
+                <div class="flex items-center space-x-3">
+                  <h3 class="text-lg font-black text-white">Solicitudes Pendientes</h3>
+                  <span id="pending-vac-badge" class="bg-brand-500 text-neutral-900 text-[10px] font-black px-2 py-0.5 rounded-full hidden">0</span>
+                </div>
+                <span id="pending-vac-chevron" class="text-brand-500 transition-transform duration-200">▼</span>
+             </button>
+             <div class="p-8 hidden" id="pending-vacations-list">
+                <p class="text-neutral-500 italic text-sm text-center">No hay peticiones pendientes.</p>
+             </div>
+          </div>
+          <div class="glass-card overflow-hidden">
             <div class="bg-brand-600/10 px-8 py-6 border-b border-brand-500/10">
               <h3 class="text-lg font-black text-white">Nuevo Colaborador</h3>
             </div>
@@ -176,7 +188,24 @@
                   <input type="password" id="w-password" class="input-field" placeholder="Pass Opcional">
                 </div>
                 <input type="tel" id="w-phone" class="input-field" placeholder="Teléfono">
-                <button type="submit" class="btn-primary-tw w-full">Añadir a Plantilla</button>
+                <div class="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
+                   <button type="button" id="btn-toggle-add-schedule" class="w-full px-4 py-3 text-[10px] font-bold text-neutral-500 uppercase tracking-widest flex justify-between items-center transition-colors hover:bg-neutral-800/50">
+                     <span>Asignar Horario Base</span>
+                     <span id="add-schedule-chevron" class="transition-transform duration-200">▼</span>
+                   </button>
+                   <div class="hidden p-3 border-t border-neutral-800" id="w-schedule-group">
+                       <div class="grid grid-cols-2 gap-2">
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Lu</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="monday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Ma</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="tuesday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Mi</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="wednesday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Ju</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="thursday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Vi</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="friday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Sá</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="saturday" placeholder="00:00-00:00"></div>
+                       <div class="flex justify-between items-center text-[10px] px-2 py-1 bg-neutral-950 rounded border border-neutral-800"><span class="font-bold text-neutral-500">Do</span><input class="w-16 bg-transparent text-right outline-none text-brand-400 new-sched-input" data-day="sunday" placeholder="00:00-00:00"></div>
+                       </div>
+                   </div>
+                </div>
+                <button type="submit" class="btn-primary-tw w-full mt-4">Añadir a Plantilla</button>
               </form>
             </div>
           </div>
@@ -199,9 +228,10 @@
     </div>
 
     <!-- WORKER VIEW -->
-    <div id="worker-view" class="space-y-12 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-         <div class="glass-card p-8 space-y-8">
+    <div id="worker-view" class="space-y-8 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+         <div class="space-y-8">
+            <div class="glass-card !bg-neutral-950 p-6 space-y-6 self-start">
             <div class="flex items-center space-x-6 mb-4">
                <div id="my-avatar" class="w-20 h-20 bg-brand-600 rounded-3xl flex items-center justify-center text-4xl font-black text-white shadow-2xl">U</div>
                <div>
@@ -218,7 +248,7 @@
                   </div>
                   <div>
                     <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Departamento</label>
-                    <input type="text" id="my-dept" class="input-field opacity-50" readonly disabled>
+                    <input type="text" id="my-dept" class="input-field" placeholder="Sin asignar">
                   </div>
                </div>
                <div>
@@ -233,10 +263,58 @@
                   <label class="block text-[10px] font-bold text-amber-500 mb-2 uppercase">Actualizar Seguridad (Opcional)</label>
                   <input type="password" id="my-pass" class="input-field" placeholder="Nueva contraseña o dejar vacío">
                </div>
-               <button type="submit" class="btn-primary-tw w-full mt-4">Guardar Mi Perfil</button>
+               <button type="submit" class="btn-primary-tw w-full">Guardar Mi Perfil</button>
             </form>
          </div>
+
+         <div class="glass-card p-8">
+            <h3 class="text-sm font-black text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-800 pb-4">Solicitar Vacaciones</h3>
+            <form id="my-vacation-request-form" class="space-y-4">
+               <div id="my-vac-request-alert" class="hidden p-4 rounded-xl text-sm mb-2"></div>
+               <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Inicio</label>
+                    <input type="date" id="my-vac-req-start" class="input-field" required>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Fin</label>
+                    <input type="date" id="my-vac-req-end" class="input-field" required>
+                  </div>
+               </div>
+               <button type="submit" class="btn-primary-tw w-full">Solicitar Vacaciones</button>
+            </form>
+            <div id="my-vacation-requests-list" class="mt-4 space-y-2 max-h-40 overflow-y-auto pr-2 text-xs"></div>
+         </div>
+      </div>
          <div class="space-y-8">
+            <div class="glass-card p-8 bg-neutral-900 border border-brand-500/20 shadow-lg shadow-brand-500/5">
+               <h3 class="text-sm font-black text-brand-400 uppercase tracking-widest mb-6 border-b border-brand-500/10 pb-4">Control de Jornada</h3>
+               <div id="clocking-card-content" class="flex flex-col sm:flex-row items-center justify-between gap-6">
+                  <div class="flex items-center space-x-4">
+                     <div id="clocking-status-icon" class="w-12 h-12 rounded-2xl bg-neutral-800 flex items-center justify-center text-2xl">⏳</div>
+                     <div>
+                        <p id="clocking-status-text" class="text-xs font-bold text-neutral-500 uppercase">Estado: <span class="text-white">Cargando...</span></p>
+                        <p id="clocking-last-event" class="text-[10px] text-neutral-600 mt-1">Sincronizando con el servidor</p>
+                     </div>
+                  </div>
+                  <button id="btn-clocking-action" onclick="handleClockingAction()" class="btn-primary-tw w-full sm:w-auto px-10 py-4 shadow-xl disabled:opacity-50" disabled>
+                     Fichar...
+                  </button>
+               </div>
+               <!-- Session Details -->
+               <div id="clocking-session-details" class="hidden mt-6 pt-6 border-t border-brand-500/10 grid grid-cols-2 gap-4">
+                  <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center sm:text-left">
+                     <p class="text-[9px] font-black text-neutral-500 uppercase mb-1">Hora Entrada</p>
+                     <p id="session-entry-time" class="text-sm font-mono text-emerald-400">--:--</p>
+                  </div>
+                  <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center sm:text-left">
+                     <p class="text-[9px] font-black text-neutral-500 uppercase mb-1">Hora Salida</p>
+                     <p id="session-exit-time" class="text-sm font-mono text-neutral-400">--:--</p>
+                  </div>
+               </div>
+               <div id="clocking-alert" class="mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold rounded-xl hidden uppercase text-center"></div>
+            </div>
+
             <div class="glass-card p-8 text-center sm:text-left">
                <h3 class="text-sm font-black text-neutral-400 uppercase tracking-widest mb-6 border-b border-neutral-800 pb-4">Actividad Acumulada</h3>
                <div class="grid grid-cols-2 gap-4">
@@ -258,6 +336,27 @@
                   <p class="text-neutral-500 italic text-sm text-center py-4">Cargando horario base...</p>
                </div>
             </div>
+
+
+          <div class="glass-card p-8">
+             <h3 class="text-sm font-black text-amber-500 uppercase tracking-widest mb-4 border-b border-amber-500/10 pb-4">Reportar Horas Extra</h3>
+             <form id="my-hour-request-form" class="space-y-4">
+                <div id="my-hour-request-alert" class="hidden p-4 rounded-xl text-sm mb-2"></div>
+                <div class="grid grid-cols-2 gap-4">
+                   <div><label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Fecha</label><input type="date" id="my-hr-date" class="input-field" required></div>
+                   <div>
+                     <label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Tipo</label>
+                     <select id="my-hr-type" class="input-field" required><option value="Extra">Extra</option><option value="Nocturna">Nocturna</option><option value="Festiva">Festiva</option></select>
+                   </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                   <div><label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Desde</label><input type="time" id="my-hr-start" class="input-field" required></div>
+                   <div><label class="block text-[10px] font-bold text-neutral-500 mb-2 uppercase">Hasta</label><input type="time" id="my-hr-end" class="input-field" required></div>
+                </div>
+                <button type="submit" class="btn-primary-tw w-full bg-amber-600 hover:bg-amber-700 shadow-amber-900/20">Registrar Petición</button>
+             </form>
+             <div id="my-hour-requests-list" class="mt-4 space-y-2 max-h-40 overflow-y-auto pr-2 text-xs"></div>
+          </div>
          </div>
       </div>
     </div>
@@ -315,6 +414,20 @@
      </div>
   </dialog>
 
+  <!-- CLOCKING HISTORY DIALOG -->
+  <dialog id="clocking-history-dialog" class="glass-card w-full max-w-4xl p-0 overflow-hidden backdrop:bg-neutral-950/80">
+     <div class="p-8">
+        <div class="flex justify-between items-center mb-6">
+           <h4 class="text-2xl font-black text-white">Registro de Asistencia: <span id="clock-history-worker-name" class="text-brand-400"></span></h4>
+           <button onclick="document.getElementById('clocking-history-dialog').close()" class="text-neutral-500 text-3xl hover:text-white">&times;</button>
+        </div>
+        <div id="clocking-history-content" class="space-y-6 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
+           <!-- History will be injected here grouped by weeks -->
+           <div class="text-center py-10 text-neutral-500 italic">Cargando registros...</div>
+        </div>
+     </div>
+  </dialog>
+
   <!-- ── CARD TEMPLATE ────────────────────────────────────────────── -->
   <template id="worker-card-tpl">
     <article class="glass-card p-6 flex flex-col group hover:border-brand-500/50 transition-all duration-300">
@@ -322,23 +435,53 @@
         <div class="flex items-center space-x-3">
           <div class="worker-card__avatar w-12 h-12 bg-brand-600 rounded-xl flex items-center justify-center text-xl font-black text-white shadow-lg"></div>
           <div>
-            <h4 class="worker-card__name text-white font-bold leading-none mb-1"></h4>
+            <div class="flex items-center gap-2 mb-1">
+              <h4 class="worker-card__name text-white font-bold leading-none"></h4>
+              <span class="vacation-badge hidden px-2 py-0.5 bg-sky-500/20 text-sky-400 text-[8px] font-black uppercase rounded-full border border-sky-500/30">Vacaciones</span>
+            </div>
             <span class="worker-card__id text-[9px] font-mono bg-neutral-800 text-neutral-500 px-1.5 rounded"></span>
             <span class="worker-card__dept text-[10px] text-neutral-500 font-bold uppercase ml-2"></span>
           </div>
         </div>
         <button class="btn-remove text-neutral-700 hover:text-red-500 transition-colors p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
       </div>
-      <div class="grid grid-cols-2 gap-3 mb-4">
-        <button class="btn-vacations p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-sky-500/10 hover:text-sky-400 transition-all">🏖 Vacas</button>
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <button class="btn-vacations p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-sky-500/10 hover:text-sky-400 transition-all">🏖 Vacaciones</button>
         <button class="btn-hours p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-amber-500/10 hover:text-amber-400 transition-all">⏱ Horas</button>
+        <button class="btn-clocking-history p-2 bg-neutral-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:bg-brand-500/10 hover:text-brand-400 transition-all">📅 Registro</button>
       </div>
       <div class="border-t border-neutral-800 pt-3">
          <button class="btn-toggle-schedule w-full text-[10px] font-black uppercase text-neutral-600 flex justify-between items-center px-1"><span>Horario Base</span> <span class="schedule-chevron">▼</span></button>
          <div class="schedule-inline-section hidden mt-3 space-y-1">
-            <div class="grid grid-cols-2 items-center text-[10px] px-2 py-1 bg-neutral-900 rounded-lg">
-               <span class="font-bold text-neutral-500">L-V</span>
-               <input class="inline-sched-input bg-transparent text-right outline-none text-brand-400" data-day="monday" placeholder="--:--">
+            <div class="grid grid-cols-2 gap-1">
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Lu</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="monday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Ma</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="tuesday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Mi</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="wednesday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Ju</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="thursday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Vi</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="friday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Sá</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="saturday" placeholder="--:--">
+              </div>
+              <div class="flex justify-between items-center text-[10px] px-2 py-0.5 bg-neutral-900 rounded">
+                 <span class="font-bold text-neutral-500">Do</span>
+                 <input class="inline-sched-input w-16 bg-transparent text-right outline-none text-brand-400" data-day="sunday" placeholder="--:--">
+              </div>
             </div>
             <button class="btn-save-inline-sched w-full py-1 text-[9px] font-black bg-brand-600/10 text-brand-500 rounded-lg mt-2">Guardar</button>
             <span class="inline-sched-status text-[9px] block text-center mt-1 hidden font-bold"></span>

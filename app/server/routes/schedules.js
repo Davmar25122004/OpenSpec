@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   const db = readDB();
   db.schedules = db.schedules || {};
   
-  const WorkersRepository = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+  const WorkersRepository = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
   const worker = await WorkersRepository.findById(id);
   
   if (!worker || worker.company_id !== req.user.companyId) {
@@ -23,7 +23,7 @@ router.put('/', express.json(), validateSchedule, async (req, res) => {
   const { id } = req.params;
   const schedule = req.body;
   
-  const WorkersRepository = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+  const WorkersRepository = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
   const worker = await WorkersRepository.findById(id);
 
   if (!worker || worker.company_id !== req.user.companyId) {

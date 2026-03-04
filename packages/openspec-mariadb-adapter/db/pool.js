@@ -11,6 +11,8 @@ const pool = mariadb.createPool({
   acquireTimeout: 10000,
   idleTimeout: 60000,
   connectTimeout: 5000,
+  insertIdAsNumber: true,
+  bigIntAsNumber: true
 });
 
 if (process.env.MARIADB_POOL_LOG === 'true') {

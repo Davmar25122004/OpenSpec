@@ -2,7 +2,7 @@ const express = require('express');
 const { requireAuth } = require('../middleware/requireAuth');
 const { readDB } = require('../db');
 const { validateWorker } = require('../middleware/validate');
-const WorkersRepository = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+const WorkersRepository = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
 
 const scheduleRoutes = require('./schedules');
 const vacationRoutes = require('./vacations');
@@ -40,10 +40,19 @@ router.get('/', async (req, res) => {
   try {
     const workers = await WorkersRepository.findByCompany(req.user.companyId);
     const db = readDB();
+    
+    const ClockEventsRepository = require('../../../packages/openspec-mariadb-adapter/db/ClockEventsRepository');
+    const workerIds = workers.map(w => w.id);
+    const latestEvents = await ClockEventsRepository.getLatestForWorkers(workerIds);
+    const clockingMap = latestEvents.reduce((acc, ev) => {
+      acc[ev.user_id] = ev;
+      return acc;
+    }, {});
 
     const enriched = workers.map(worker => {
       const vacations = db.vacations?.[worker.id] || [];
       const hours = db.hours?.[worker.id] || [];
+      const lastClocking = clockingMap[worker.id] || null;
 
       let vacDays = 0;
       let onVacationNow = false;
@@ -75,7 +84,8 @@ router.get('/', async (req, res) => {
         company: worker.company_id,
         vacationDays: vacDays,
         overtimeHours: parseFloat(totalHrs.toFixed(1)),
-        onVacationNow
+        onVacationNow,
+        lastClocking
       };
     });
 
@@ -132,47 +142,6 @@ router.post('/', validateWorker, async (req, res) => {
   }
 });
 
-router.put('/:id', requireAuth, async (req, res) => {
-  const { id } = req.params;
-  const { name, department, email, phone } = req.body;
-
-  try {
-    const worker = await WorkersRepository.findById(id);
-    if (!worker || worker.company_id !== req.user.companyId) {
-      return res.status(404).json({ error: 'Trabajador no encontrado en tu empresa.' });
-    }
-
-    await WorkersRepository.update(id, { name: name || worker.name, department, email, phone });
-    const updated = await WorkersRepository.findById(id);
-    res.json(updated);
-  } catch (err) {
-    console.error('PUT /workers/:id error:', err);
-    res.status(500).json({ error: 'Error al actualizar trabajador' });
-  }
-});
-
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const deleted = await WorkersRepository.delete(id, req.user.companyId);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Trabajador no encontrado en tu empresa.' });
-    }
-
-    // Limpiamos datos relacionados en db.json (vacaciones y horas)
-    const { readDB, writeDB } = require('../db');
-    const db = readDB();
-    if (db.vacations && db.vacations[id]) delete db.vacations[id];
-    if (db.hours && db.hours[id]) delete db.hours[id];
-    writeDB(db);
-
-    res.json({ message: 'Trabajador eliminado permanentemente' });
-  } catch (err) {
-    console.error('DELETE /workers/:id error:', err);
-    res.status(500).json({ error: 'Error al eliminar trabajador' });
-  }
-});
 
 router.get('/me', async (req, res) => {
   if (!req.user.isWorker) return res.status(403).json({ error: 'Acceso solo para trabajadores' });
@@ -220,6 +189,49 @@ router.put('/me', async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar perfil' });
   }
 });
+
+router.put('/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const { name, department, email, phone } = req.body;
+
+  try {
+    const worker = await WorkersRepository.findById(id);
+    if (!worker || worker.company_id !== req.user.companyId) {
+      return res.status(404).json({ error: 'Trabajador no encontrado en tu empresa.' });
+    }
+
+    await WorkersRepository.update(id, { name: name || worker.name, department, email, phone });
+    const updated = await WorkersRepository.findById(id);
+    res.json(updated);
+  } catch (err) {
+    console.error('PUT /workers/:id error:', err);
+    res.status(500).json({ error: 'Error al actualizar trabajador' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await WorkersRepository.delete(id, req.user.companyId);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Trabajador no encontrado en tu empresa.' });
+    }
+
+    // Limpiamos datos relacionados en db.json (vacaciones y horas)
+    const { readDB, writeDB } = require('../db');
+    const db = readDB();
+    if (db.vacations && db.vacations[id]) delete db.vacations[id];
+    if (db.hours && db.hours[id]) delete db.hours[id];
+    writeDB(db);
+
+    res.json({ message: 'Trabajador eliminado permanentemente' });
+  } catch (err) {
+    console.error('DELETE /workers/:id error:', err);
+    res.status(500).json({ error: 'Error al eliminar trabajador' });
+  }
+});
+
 
 module.exports = router;
 

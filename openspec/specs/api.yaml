@@ -1,0 +1,51 @@
+openapi: 3.0.0
+info:
+  title: OpenSpec API
+  version: "1.0.0"
+paths:
+  /api/vacation-requests/worker/{workerId}:
+    post:
+      summary: Submit a new vacation request for a worker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+      responses:
+        "201":
+          description: Request submitted
+    get:
+      summary: Get all vacation requests for a specific worker
+      responses:
+        "200":
+          description: A list of vacation requests
+  /api/vacation-requests/pending:
+    get:
+      summary: Get all pending vacation requests (admin only)
+      responses:
+        "200":
+          description: A list of pending vacation requests
+  /api/vacation-requests/{id}/status:
+    put:
+      summary: Approve or reject a vacation request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+      responses:
+        "200":
+          description: Request updated successfully
+        "409":
+          description: Conflict (e.g., overlapping vacation dates)
