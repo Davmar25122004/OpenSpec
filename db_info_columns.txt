@@ -1,0 +1,6 @@
+Field: username, Type: varchar(128)
+Field: hash, Type: varchar(255)
+Field: company_id, Type: varchar(128)
+Field: role, Type: varchar(32)
+Field: created_at, Type: datetime
+Field: updated_at, Type: datetime

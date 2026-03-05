@@ -5,7 +5,7 @@ const Joi = require('joi');
 const UsersRepository = require('../../../packages/openspec-mariadb-adapter/db/UsersRepository');
 const { JWT_SECRET } = require('../middleware/requireAuth');
 
-const IS_DEV = process.env.NODE_ENV === 'development';
+const IS_DEV = true;
 
 const router = express.Router();
 
@@ -49,8 +49,10 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+  if (IS_DEV) console.log('[DEBUG] Login req.body:', req.body);
   const { error, value } = loginSchema.validate(req.body);
   if (error) {
+    if (IS_DEV) console.log('[DEBUG] Validation error:', error.details[0].message);
     return res.status(400).json({ error: error.details[0].message });
   }
 
@@ -59,21 +61,35 @@ router.post('/login', async (req, res) => {
   try {
     if (IS_DEV) console.log('[DEBUG] Admin Login Attempt:', { username, companyId });
     const user = await UsersRepository.findByUsername(username);
-    if (!user || user.company_id !== companyId) {
-      if (IS_DEV) console.log('[DEBUG] Admin not found or company mismatch');
+    if (IS_DEV) console.log('[DEBUG] User found in DB:', user);
+
+    if (!user) {
+      if (IS_DEV) console.log('[DEBUG] User not found');
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    if (user.company_id !== companyId) {
+      if (IS_DEV) console.log('[DEBUG] Company mismatch. DB:', user.company_id, 'Input:', companyId);
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
     const isValid = bcrypt.compareSync(password, user.hash);
+    if (IS_DEV) console.log('[DEBUG] Password valid:', isValid);
+
     if (!isValid) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
+    if (IS_DEV) console.log('[DEBUG] Admin Login Success:', username);
     const token = jwt.sign({ username: user.username, companyId: user.company_id, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
     res.json({ token, companyId: user.company_id, username: user.username, role: 'admin' });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Error interno del servidor en el login' });
+    console.error('CRITICAL LOGIN ERROR:', err);
+    res.status(500).json({ 
+      error: 'Error interno del servidor en el login', 
+      details: err.message,
+      stack: IS_DEV ? err.stack : undefined 
+    });
   }
 });
 
@@ -101,7 +117,7 @@ router.post('/worker/register', async (req, res) => {
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   const { id, name, email, password, companyId, department } = value;
-  const WorkersRepo = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+  const WorkersRepo = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
 
   try {
     const existingById = await WorkersRepo.findById(id);
@@ -158,7 +174,7 @@ router.post('/worker/login', async (req, res) => {
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   const { email, password, companyId } = value;
-  const WorkersRepo = require('../../../openspec-mariadb-adapter/db/WorkersRepository');
+  const WorkersRepo = require('../../../packages/openspec-mariadb-adapter/db/WorkersRepository');
 
   try {
     if (IS_DEV) console.log('[DEBUG] Worker Login Attempt:', { email, companyId });

@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS artifacts (
     created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE KEY uq_change_artifact (change_id, artifact_id),
+    UNIQUE KEY uq_change_artifact (change_id, artifact_id)
 ) ENGINE=InnoDB;
 
 -- Create least privilege user for application
