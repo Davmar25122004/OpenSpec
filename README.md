@@ -1,27 +1,40 @@
 # OpenSpec Workforce Management
 
-Plataforma modular para la administración de recursos humanos y control de presencia, diseñada bajo estándares de ingeniería de software profesional y centrada en la trazabilidad operativa.
+Plataforma para la gestión táctica de recursos humanos, control de asistencia y administración de flujos de trabajo corporativos. Este sistema ha sido diseñado y ejecutado íntegramente bajo el ecosistema **OpenSpec** mediante la inyección de especificaciones, utilizando el agente de ingeniería **Antigravity** y la orquestación multi-agente de **Open Agent Manager (OAM)**.
 
-## Propósito
+## Arquitectura de Ingeniería
 
-Este sistema centraliza la gestión de equipos mediante herramientas de control de tiempos y flujos administrativos, garantizando la integridad de los datos y una experiencia de usuario fluida.
+A diferencia de los desarrollos convencionales, este repositorio es el resultado de un ciclo de vida dirigido por especificaciones (Specs-Driven Development). Cada componente, desde el esquema de MariaDB hasta las reglas de colisión de fechas, ha sido validado mediante el motor de estados de OpenSpec antes de su implementación.
 
-- **Control de Asistencia**: Registro de jornada con validación de estado y geolocalización integrada.
-- **Gestión de Equipos**: Administración de departamentos, horarios, vacaciones y horas extra.
-- **Seguridad**: Implementación de controles contra acceso no autorizado y ataques de fuerza bruta.
+### Workflow y Tooling (opsx)
+
+El desarrollo se ha gestionado mediante comandos del OpenSpec especializos que garantizan la trazabilidad total:
+
+- `opsx-propose`: Generación de propuestas técnicas y análisis de impacto.
+- `opsx-apply`: Implementación automatizada basada en artefactos de diseño y especificación.
+- `opsx-archive`: Cierre y documentación histórica de cada iteración del software.
+
+## Hitos de Implementación (Evolución del Proyecto)
+
+El sistema ha evolucionado a través de hitos críticos documentados en nuestro log de ingeniería:
+
+1.  **Fundamentos y Estructura**: Creación de la SPA (HTML5/Vanilla JS) y backend en Node.js con persistencia atómica.
+2.  **Gestión Laboral Avanzada**: Implementación de cuadrantes de trabajo, gestión de vacaciones con prevención de colisiones (jQuery Datepicker) y seguridad perimetral (JWT).
+3.  **Modernización Progresiva**: Migración estética a **Tailwind CSS** (Glassmorphism) y optimización de UX mediante sistemas de notificaciones Toast.
+4.  **Infraestructura Relacional**: Migración crítica de JSON a **MariaDB** utilizando patrones DAO y despliegue sobre **Docker** para estandarización de entornos.
+5.  **Seguridad Enterprise (Double Shield)**: Blindaje contra Inyección SQL mediante Prepared Statements y validación estricta de esquemas con **Joi**.
+6.  **Portal del Trabajador (Self-Service)**: Implementación de acceso dual (Admin/Worker) con privilegios segregados y gestión de perfiles personales.
+7.  **Geolocalización y Registro de Jornada**: Sistema de fichaje (Clocking) con captura de coordenadas GPS y motor de reconstrucción de sesiones laborales.
+8.  **Higiene Arquitectónica**: Reorganización del proyecto como monorepo modular (`packages/`) y saneamiento de procesos de seguridad (Rate Limiting y ofuscación de errores).
 
 ## Stack Tecnológico
 
-Arquitectura moderna basada en micro-servicios y componentes modulares:
+- **Ecosistema**: OpenSpec, Antigravity Agent, Open Agent Manager.
+- **Core**: Node.js, Express.js, MariaDB (Dockerized).
+- **Frontend**: Vanilla JS, Tailwind CSS, HTML5.
+- **Seguridad**: JWT, Bcrypt, Joi, Express-Rate-Limit.
 
-- **Backend**: Node.js & Express.js.
-- **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism UI) y JavaScript ES6+.
-- **Persistencia**: MariaDB (Estructura relacional optimizada).
-- **Seguridad**: JWT para sesiones, BCrypt para hashing, y Rate Limiting para protección de API.
-
-## Arquitectura y Monorepo
-
-El proyecto utiliza una estructura de monorepo para facilitar el mantenimiento y la escalabilidad de los adaptadores de datos:
+## Estructura del Proyecto
 
 ```text
 OpennSpec/
@@ -31,12 +44,12 @@ OpennSpec/
 ├── packages/
 │   └── openspec-mariadb-adapter/ # Adaptador de persistencia segregado
 ├── tooling/        # Utilidades de desarrollo
-└── openspec/       # Documentación técnica y especificaciones
+└── openspec/       # Fuente de verdad: Gestión de cambios y especificaciones
+    ├── changes/    # Cambios activos en proceso de implementación
+    ├── archive/    # Historial de cambios completados y versionados
+    ├── specs/      # Especificaciones técnicas de capacidades (Source of Truth)
+    └── PROJECT_LOG.md # Bitácora de ingeniería y evolución del sistema
 ```
-
-## Desarrollo Dirigido por Especificaciones (OpenSpec)
-
-Este proyecto sigue la metodología **OpenSpec**, donde cada funcionalidad nace de una especificación técnica. Esto permite un historial de cambios (`PROJECT_LOG.md`) totalmente auditable y una alineación estricta entre los requisitos del negocio y el código implementado.
 
 ---
 
