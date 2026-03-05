@@ -75,11 +75,16 @@ Para ejecutar este proyecto en tu entorno local:
 
 3.  **Configurar el Servidor**:
     - Ve a `app/server`.
-    - Copia `.env.example` a `.env` y configura tus secretos (JWT_SECRET, etc.).
-    - Instala dependencias y arranca:
+    - Instala dependencias:
 
     ```bash
     npm install
+    ```
+
+    _(Esto generará automáticamente tu archivo `.env` con un `JWT_SECRET` seguro si no existe)._
+    - Arranca el servidor:
+
+    ```bash
     npm start
     ```
 
