@@ -1,7 +1,13 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../packages/openspec-mariadb-adapter/.env') });
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Cargar variables de entorno locales (app/server/.env)
+dotenv.config({ path: path.join(__dirname, '.env') });
+// Cargar variables de entorno del adaptador MariaDB como fallback
+dotenv.config({ path: path.resolve(__dirname, '../../packages/openspec-mariadb-adapter/.env'), override: false });
+
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const { rateLimit } = require('express-rate-limit');
 
 const app = express();

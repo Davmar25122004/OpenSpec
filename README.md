@@ -64,7 +64,14 @@ Para ejecutar este proyecto en tu entorno local:
     cd OpenSpec
     ```
 
-2.  **Levantar la Infraestructura (Docker)**:
+2.  **Preparar el entorno (Instalación automática)**:
+    Ejecuta el siguiente comando en la raíz para instalar todas las dependencias y configurar los archivos `.env` automáticamente:
+
+    ```bash
+    npm run setup
+    ```
+
+3.  **Levantar la Infraestructura (Docker)**:
     Asegúrate de tener Docker instalado y ejecuta:
 
     ```bash
@@ -73,23 +80,15 @@ Para ejecutar este proyecto en tu entorno local:
 
     _Esto levantará la base de datos MariaDB con el esquema preconfigurado._
 
-3.  **Configurar el Servidor**:
-    - Ve a `app/server`.
-    - Instala dependencias:
+4.  **Arrancar la Aplicación**:
+    Desde la carpeta raíz, ejecuta el comando principal:
 
     ```bash
-    npm install
+    node index.js
     ```
 
-    _(Esto generará automáticamente tu archivo `.env` con un `JWT_SECRET` seguro si no existe)._
-    - Arranca el servidor:
-
-    ```bash
-    npm start
-    ```
-
-4.  **Acceder a la Web**:
-    Abre tu navegador en `http://localhost:3000` (o el puerto configurado).
+5.  **Acceder a la Web**:
+    Abre tu navegador en `http://localhost:3000`.
 
 ---
 

@@ -1,0 +1,19 @@
+{
+  "name": "opennspec",
+  "version": "1.1.0",
+  "description": "OpenSpec — Especificaciones y Desarrollo Dirigido por Agentes",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "setup": "cd app/server && npm install && node setup-env.js && cd ../../packages/openspec-mariadb-adapter && npm install",
+    "install-deps": "npm install && cd app/server && npm install && cd ../../packages/openspec-mariadb-adapter && npm install"
+  },
+  "keywords": [
+    "openspec",
+    "antigravity",
+    "development"
+  ],
+  "author": "OpenSpec Team",
+  "license": "ISC"
+}
