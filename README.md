@@ -53,4 +53,39 @@ OpennSpec/
 
 ---
 
+## Guía de Inicio Rápido
+
+Para ejecutar este proyecto en tu entorno local:
+
+1.  **Clonar el repositorio**:
+
+    ```bash
+    git clone https://github.com/Davmar25122004/OpenSpec.git
+    cd OpenSpec
+    ```
+
+2.  **Levantar la Infraestructura (Docker)**:
+    Asegúrate de tener Docker instalado y ejecuta:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    _Esto levantará la base de datos MariaDB con el esquema preconfigurado._
+
+3.  **Configurar el Servidor**:
+    - Ve a `app/server`.
+    - Copia `.env.example` a `.env` y configura tus secretos (JWT_SECRET, etc.).
+    - Instala dependencias y arranca:
+
+    ```bash
+    npm install
+    npm start
+    ```
+
+4.  **Acceder a la Web**:
+    Abre tu navegador en `http://localhost:3000` (o el puerto configurado).
+
+---
+
 _Gestión eficiente para equipos modernos._
