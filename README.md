@@ -92,4 +92,35 @@ Para ejecutar este proyecto en tu entorno local:
 
 ---
 
+## Guía de Pruebas: Probar como Trabajador (Cliente)
+
+El sistema tiene dos vistas principales: Empresa (Administrador) y Trabajador (Empleado). Si quieres probar la vista de un empleado:
+
+### Primera Vez: Crea una Empresa y un Trabajador (Vista Admin)
+
+1. Entra a la web, asegúrate de estar en la pestaña **EMPRESA**.
+2. Dale al botón de **Registrar**.
+3. Pon el nombre de tu empresa (ej: `mibusiness`), un usuario (ej: `admin`), y una contraseña.
+4. Una vez dentro de tu panel de Admin, ve a **"Añadir Trabajador"**.
+5. Rellena los datos básicos. Aquí le asignarás un **Email** (ej: `empleado@mibusiness.com`) y una **Contraseña**.
+6. Haz clic en "Añadir Trabajador". _¡Ya tienes tu empleado creado!_
+7. Cierra sesión dándole al botón superior derecho "Cerrar Sesión".
+
+### Entrar y probar como Trabajador
+
+1. En la pantalla principal de login, cambia el botón superior de Empresa a **TRABAJADOR**.
+2. Asegúrate de estar en la pestaña de **Ingresar** (login).
+3. Rellena los datos:
+   - **EMPRESA**: `mibusiness` (o la que creaste en el paso 3).
+   - **CORREO**: `empleado@mibusiness.com` (el email del trabajador).
+   - **CONTRASEÑA**: La que le pusiste.
+4. Dale a **Entrar al Portal**.
+5. ¡Listo! Ahora verás el portal de empleado donde podrás:
+   - **Solicitar Vacaciones**.
+   - **Registrar Horas extra**.
+   - **Fichar la entrada y salida** (Clock-in).
+   - Consultar tu propio cuadrante laboral dictado por la administración.
+
+---
+
 _Gestión eficiente para equipos modernos._
