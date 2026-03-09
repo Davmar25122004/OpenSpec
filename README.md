@@ -56,26 +56,31 @@ OpennSpec/
 ## Guía de Inicio Rápido
 
 Para ejecutar este proyecto en tu entorno local:
+1. **Instalar OpenSpec**
+   Desde C: 
+   ```npm install -g @fission-ai/openspec@latest```
+   En el directorio del proyecto
+   ```openspec init```
 
-1.  **Clonar el repositorio**:
+3.  **Clonar el repositorio**:
 
     ```bash
     git clone https://github.com/Davmar25122004/OpenSpec.git
     cd OpenSpec
     ```
-2.1 **Instalar  npm en el proyecto** 
+3 **Instalar  npm en el proyecto** 
       ```bash
     npm install
     ```
 
-2.2  **Preparar el entorno (Instalación automática)**:
+4  **Preparar el entorno (Instalación automática)**:
     Ejecuta el siguiente comando en la raíz para instalar todas las dependencias y configurar los archivos `.env` automáticamente:
 
     ```bash
     npm run setup
     ```
 
-3.  **Levantar la Infraestructura (Docker)**:
+5.  **Levantar la Infraestructura (Docker)**:
     Asegúrate de tener Docker instalado y ejecuta:
 
     ```bash
@@ -84,14 +89,14 @@ Para ejecutar este proyecto en tu entorno local:
 
     _Esto levantará la base de datos MariaDB con el esquema preconfigurado._
 
-4.  **Arrancar la Aplicación**:
+6.  **Arrancar la Aplicación**:
     Desde la carpeta raíz, ejecuta el comando principal:
 
     ```bash
     node index.js
     ```
 
-5.  **Acceder a la Web**:
+7.  **Acceder a la Web**:
     Abre tu navegador en `http://localhost:3000`.
 
 ---
