@@ -1,7 +1,14 @@
 {
   "workers": [],
   "vacations": {
-    "ep1": []
+    "ep1": [],
+    "emp23": [
+      {
+        "id": "91bd8676-7d65-46d3-b9c7-6375427c92da",
+        "startDate": "2026-03-11",
+        "endDate": "2026-03-20"
+      }
+    ]
   },
   "hours": {},
   "schedules": {
