@@ -63,8 +63,12 @@ Para ejecutar este proyecto en tu entorno local:
     git clone https://github.com/Davmar25122004/OpenSpec.git
     cd OpenSpec
     ```
+2.1 **Instalar  npm en el proyecto** 
+      ```bash
+    npm install
+    ```
 
-2.  **Preparar el entorno (Instalación automática)**:
+2.2  **Preparar el entorno (Instalación automática)**:
     Ejecuta el siguiente comando en la raíz para instalar todas las dependencias y configurar los archivos `.env` automáticamente:
 
     ```bash
