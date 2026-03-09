@@ -61,6 +61,7 @@ Para ejecutar este proyecto en tu entorno local:
    ```npm install -g @fission-ai/openspec@latest```
    En el directorio del proyecto
    ```openspec init```
+   Y elegimos el entorno en el que desarrollaremos, en este caso Antigravity.
 
 3.  **Clonar el repositorio**:
 
