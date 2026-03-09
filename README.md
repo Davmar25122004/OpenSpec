@@ -63,12 +63,20 @@ Para ejecutar este proyecto en tu entorno local:
    ```openspec init```
    Y elegimos el entorno en el que desarrollaremos, en este caso Antigravity.
 
-3.  **Clonar el repositorio**:
+1.  **Clonar el repositorio**:
 
     ```bash
     git clone https://github.com/Davmar25122004/OpenSpec.git
     cd OpenSpec
     ```
+
+2. **Instalar OpenSpec**
+  
+   ```npm install -g @fission-ai/openspec@latest```
+   En el directorio del proyecto
+   ```openspec init```
+   Y elegimos el entorno en el que desarrollaremos, en este caso Antigravity.
+   
 3 **Instalar  npm en el proyecto** 
       ```bash
     npm install
