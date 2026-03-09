@@ -1,9 +1,5 @@
-// Point to the app/server node_modules
-module.paths.push('c:/OpennSpec/app/server/node_modules');
-module.paths.push('c:/OpennSpec/packages/openspec-mariadb-adapter/node_modules');
-
 const bcrypt = require('bcryptjs');
-const UsersRepository = require('./packages/openspec-mariadb-adapter/db/UsersRepository');
+const UsersRepository = require('../packages/openspec-mariadb-adapter/db/UsersRepository');
 
 async function testLogin(username, password, companyId) {
     try {

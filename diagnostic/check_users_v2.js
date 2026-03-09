@@ -1,9 +1,9 @@
-const pool = require('./packages/openspec-mariadb-adapter/db/pool');
+const pool = require('../packages/openspec-mariadb-adapter/db/pool');
 
 async function checkColumns() {
     try {
         const rows = await pool.query('DESCRIBE users');
-        console.log('Columns in users:', JSON.stringify(rows, null, 2));
+        rows.forEach(r => console.log(`Field: ${r.Field}, Type: ${r.Type}`));
         process.exit(0);
     } catch (err) {
         console.error('Error:', err);

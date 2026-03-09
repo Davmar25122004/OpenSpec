@@ -1,4 +1,4 @@
-const pool = require('./packages/openspec-mariadb-adapter/db/pool');
+const pool = require('../packages/openspec-mariadb-adapter/db/pool');
 const fs = require('fs');
 
 async function checkUser() {
